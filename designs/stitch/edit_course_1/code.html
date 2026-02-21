@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Edit Course</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                        "surface-dark": "#1c2630",
+                        "input-dark": "#24303b",
+                        "border-dark": "#324d67",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar hiding for horizontal scroll areas */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col antialiased">
+<!-- Top Navigation Bar (iOS Style) -->
+<header class="sticky top-0 z-50 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors">
+<div class="flex items-center justify-between px-4 h-14">
+<button class="flex items-center text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors">
+<span class="text-base font-normal">Cancel</span>
+</button>
+<h1 class="text-base font-bold text-center flex-1 truncate px-2">Edit Course</h1>
+<button class="flex items-center justify-end font-bold text-primary hover:text-primary/80 transition-colors">
+                Save
+            </button>
+</div>
+</header>
+<!-- Main Scrollable Content -->
+<main class="flex-1 w-full max-w-lg mx-auto p-4 space-y-6">
+<!-- Basic Info Section -->
+<section class="space-y-4">
+<div class="relative group">
+<label class="block text-sm font-medium text-slate-500 dark:text-slate-400 mb-1.5 ml-1" for="course-name">Course Name</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
+<span class="material-symbols-outlined text-[20px]">menu_book</span>
+</span>
+<input class="block w-full pl-10 pr-4 py-3 bg-white dark:bg-input-dark border border-slate-200 dark:border-border-dark rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" id="course-name" placeholder="e.g. Advanced Calculus II" type="text" value="Calculus II"/>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div class="relative group">
+<label class="block text-sm font-medium text-slate-500 dark:text-slate-400 mb-1.5 ml-1" for="location">Location</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
+<span class="material-symbols-outlined text-[20px]">location_on</span>
+</span>
+<input class="block w-full pl-10 pr-4 py-3 bg-white dark:bg-input-dark border border-slate-200 dark:border-border-dark rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" id="location" placeholder="Room Number" type="text" value="Room 304"/>
+</div>
+</div>
+<div class="relative group">
+<label class="block text-sm font-medium text-slate-500 dark:text-slate-400 mb-1.5 ml-1" for="teacher">Teacher</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
+<span class="material-symbols-outlined text-[20px]">person</span>
+</span>
+<input class="block w-full pl-10 pr-4 py-3 bg-white dark:bg-input-dark border border-slate-200 dark:border-border-dark rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" id="teacher" placeholder="Professor Name" type="text" value="Dr. Smith"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Time & Frequency Section -->
+<section>
+<h2 class="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3 ml-1">Time &amp; Frequency</h2>
+<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark overflow-hidden divide-y divide-slate-100 dark:divide-border-dark shadow-sm">
+<!-- Main Time Picker Trigger -->
+<button class="w-full flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+<div class="flex items-center gap-4">
+<div class="size-10 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">schedule</span>
+</div>
+<div class="flex flex-col items-start">
+<p class="text-base font-medium text-slate-900 dark:text-white">Monday, 10:00 - 11:30</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">Every Week (1-16)</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-slate-400 dark:text-slate-500 group-hover:text-primary transition-colors">chevron_right</span>
+</button>
+<!-- Add Another Time Slot (Optional UI pattern for multiple sessions) -->
+<button class="w-full flex items-center justify-center p-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+<span class="text-sm font-medium text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                        Add Another Time Slot
+                    </span>
+</button>
+</div>
+</section>
+<!-- Color Picker Section -->
+<section>
+<h2 class="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3 ml-1">Display Color</h2>
+<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-4 shadow-sm overflow-hidden">
+<div class="flex items-center gap-4 overflow-x-auto no-scrollbar pb-1">
+<!-- Selected Color -->
+<label class="group relative flex cursor-pointer items-center justify-center">
+<input checked="" class="peer sr-only" name="color-picker" type="radio"/>
+<div class="h-10 w-10 rounded-full bg-primary ring-2 ring-primary ring-offset-2 ring-offset-white dark:ring-offset-surface-dark transition-all"></div>
+<span class="material-symbols-outlined absolute text-white text-[20px] opacity-100 scale-100 transition-transform">check</span>
+</label>
+<!-- Color Option: Red -->
+<label class="group relative flex cursor-pointer items-center justify-center">
+<input class="peer sr-only" name="color-picker" type="radio"/>
+<div class="h-10 w-10 rounded-full bg-red-500 ring-0 peer-checked:ring-2 peer-checked:ring-red-500 peer-checked:ring-offset-2 ring-offset-white dark:ring-offset-surface-dark transition-all hover:opacity-90"></div>
+<span class="material-symbols-outlined absolute text-white text-[20px] opacity-0 scale-50 peer-checked:opacity-100 peer-checked:scale-100 transition-all">check</span>
+</label>
+<!-- Color Option: Emerald -->
+<label class="group relative flex cursor-pointer items-center justify-center">
+<input class="peer sr-only" name="color-picker" type="radio"/>
+<div class="h-10 w-10 rounded-full bg-emerald-500 ring-0 peer-checked:ring-2 peer-checked:ring-emerald-500 peer-checked:ring-offset-2 ring-offset-white dark:ring-offset-surface-dark transition-all hover:opacity-90"></div>
+<span class="material-symbols-outlined absolute text-white text-[20px] opacity-0 scale-50 peer-checked:opacity-100 peer-checked:scale-100 transition-all">check</span>
+</label>
+<!-- Color Option: Amber -->
+<label class="group relative flex cursor-pointer items-center justify-center">
+<input class="peer sr-only" name="color-picker" type="radio"/>
+<div class="h-10 w-10 rounded-full bg-amber-500 ring-0 peer-checked:ring-2 peer-checked:ring-amber-500 peer-checked:ring-offset-2 ring-offset-white dark:ring-offset-surface-dark transition-all hover:opacity-90"></div>
+<span class="material-symbols-outlined absolute text-white text-[20px] opacity-0 scale-50 peer-checked:opacity-100 peer-checked:scale-100 transition-all">check</span>
+</label>
+<!-- Color Option: Purple -->
+<label class="group relative flex cursor-pointer items-center justify-center">
+<input class="peer sr-only" name="color-picker" type="radio"/>
+<div class="h-10 w-10 rounded-full bg-purple-500 ring-0 peer-checked:ring-2 peer-checked:ring-purple-500 peer-checked:ring-offset-2 ring-offset-white dark:ring-offset-surface-dark transition-all hover:opacity-90"></div>
+<span class="material-symbols-outlined absolute text-white text-[20px] opacity-0 scale-50 peer-checked:opacity-100 peer-checked:scale-100 transition-all">check</span>
+</label>
+<!-- Color Option: Pink -->
+<label class="group relative flex cursor-pointer items-center justify-center">
+<input class="peer sr-only" name="color-picker" type="radio"/>
+<div class="h-10 w-10 rounded-full bg-pink-500 ring-0 peer-checked:ring-2 peer-checked:ring-pink-500 peer-checked:ring-offset-2 ring-offset-white dark:ring-offset-surface-dark transition-all hover:opacity-90"></div>
+<span class="material-symbols-outlined absolute text-white text-[20px] opacity-0 scale-50 peer-checked:opacity-100 peer-checked:scale-100 transition-all">check</span>
+</label>
+<!-- Color Option: Gray -->
+<label class="group relative flex cursor-pointer items-center justify-center">
+<input class="peer sr-only" name="color-picker" type="radio"/>
+<div class="h-10 w-10 rounded-full bg-slate-500 ring-0 peer-checked:ring-2 peer-checked:ring-slate-500 peer-checked:ring-offset-2 ring-offset-white dark:ring-offset-surface-dark transition-all hover:opacity-90"></div>
+<span class="material-symbols-outlined absolute text-white text-[20px] opacity-0 scale-50 peer-checked:opacity-100 peer-checked:scale-100 transition-all">check</span>
+</label>
+</div>
+</div>
+</section>
+<!-- Spacer for visual breathing room before delete button -->
+<div class="h-4"></div>
+<!-- Delete Action -->
+<button class="w-full py-3.5 px-4 rounded-xl border border-red-500/20 bg-red-500/10 hover:bg-red-500/20 text-red-500 dark:text-red-400 font-semibold text-base transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">delete</span>
+            Delete Course
+        </button>
+<!-- Bottom Padding for scrolling -->
+<div class="h-8"></div>
+</main>
+</body></html>

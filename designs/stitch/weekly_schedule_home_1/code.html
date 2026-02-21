@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Weekly Schedule Home</title>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "on-primary": "#ffffff",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#111a22",
+                        "surface-dark": "#192633",
+                        "surface-variant": "#233648",
+                        "secondary-container": "#2a4158",
+                        "on-surface": "#e2e8f0",
+                        "on-surface-variant": "#94a3b8",
+                        // Muted pastel colors for cards
+                        "card-math": "#4fd1c5", // Teal
+                        "card-physics": "#9f7aea", // Purple
+                        "card-history": "#f6ad55", // Orange
+                        "card-bio": "#68d391", // Green
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"],
+                        "body": ["Lexend", "sans-serif"],
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased selection:bg-primary selection:text-white overflow-hidden">
+<div class="relative flex h-screen w-full flex-col overflow-hidden max-w-md mx-auto border-x border-surface-variant shadow-2xl">
+<!-- Header -->
+<header class="flex items-center justify-between px-4 py-3 bg-background-light dark:bg-background-dark sticky top-0 z-20">
+<h1 class="text-xl font-bold tracking-tight">October 2023</h1>
+<div class="flex items-center gap-2">
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-variant text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-variant text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</header>
+<!-- Date Strip (Sticky) -->
+<div class="px-2 pb-2 bg-background-light dark:bg-background-dark z-10 shadow-sm border-b border-surface-variant/30">
+<div class="flex justify-between items-center text-center gap-1">
+<!-- Day Item -->
+<button class="flex-1 flex flex-col items-center justify-center py-2 rounded-2xl gap-1 text-on-surface-variant hover:bg-surface-variant/50 transition-colors">
+<span class="text-xs font-medium uppercase tracking-wide">Mon</span>
+<span class="text-base font-semibold">21</span>
+</button>
+<!-- Day Item -->
+<button class="flex-1 flex flex-col items-center justify-center py-2 rounded-2xl gap-1 text-on-surface-variant hover:bg-surface-variant/50 transition-colors">
+<span class="text-xs font-medium uppercase tracking-wide">Tue</span>
+<span class="text-base font-semibold">22</span>
+</button>
+<!-- Active Day Item -->
+<button class="flex-1 flex flex-col items-center justify-center py-2 rounded-2xl gap-1 bg-primary text-white shadow-lg shadow-primary/20 scale-105 transition-transform">
+<span class="text-xs font-medium uppercase tracking-wide">Wed</span>
+<span class="text-base font-semibold">23</span>
+</button>
+<!-- Day Item -->
+<button class="flex-1 flex flex-col items-center justify-center py-2 rounded-2xl gap-1 text-on-surface-variant hover:bg-surface-variant/50 transition-colors">
+<span class="text-xs font-medium uppercase tracking-wide">Thu</span>
+<span class="text-base font-semibold">24</span>
+</button>
+<!-- Day Item -->
+<button class="flex-1 flex flex-col items-center justify-center py-2 rounded-2xl gap-1 text-on-surface-variant hover:bg-surface-variant/50 transition-colors">
+<span class="text-xs font-medium uppercase tracking-wide">Fri</span>
+<span class="text-base font-semibold">25</span>
+</button>
+</div>
+</div>
+<!-- Main Timetable Content (Scrollable) -->
+<main class="flex-1 overflow-y-auto no-scrollbar relative bg-background-light dark:bg-background-dark">
+<!-- Grid Container -->
+<div class="flex flex-col relative min-h-full pb-24">
+<!-- Period 1 -->
+<div class="flex flex-row">
+<div class="w-16 flex-shrink-0 flex flex-col items-center pt-3 border-r border-transparent">
+<span class="text-xs font-medium text-on-surface-variant">08:00</span>
+<span class="text-[10px] text-on-surface-variant/60 mt-0.5">08:50</span>
+</div>
+<div class="flex-1 p-2">
+<div class="h-24 w-full rounded-2xl bg-surface-dark border-l-4 border-card-math p-3 flex flex-col justify-between shadow-sm relative overflow-hidden group">
+<!-- Background gradient opacity -->
+<div class="absolute inset-0 bg-card-math/10"></div>
+<div class="relative z-10">
+<h3 class="font-bold text-lg text-slate-100">Mathematics</h3>
+<p class="text-sm text-card-math font-medium">Room 101</p>
+</div>
+<div class="relative z-10 flex items-center gap-1.5 mt-1">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">person</span>
+<span class="text-xs text-on-surface-variant">Mr. Smith</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Period 2 -->
+<div class="flex flex-row mt-1">
+<div class="w-16 flex-shrink-0 flex flex-col items-center pt-3 border-r border-transparent">
+<span class="text-xs font-medium text-on-surface-variant">09:00</span>
+<span class="text-[10px] text-on-surface-variant/60 mt-0.5">09:50</span>
+</div>
+<div class="flex-1 p-2">
+<div class="h-24 w-full rounded-2xl bg-surface-dark border-l-4 border-card-physics p-3 flex flex-col justify-between shadow-sm relative overflow-hidden">
+<div class="absolute inset-0 bg-card-physics/10"></div>
+<div class="relative z-10">
+<h3 class="font-bold text-lg text-slate-100">Physics</h3>
+<p class="text-sm text-card-physics font-medium">Lab 3</p>
+</div>
+<div class="relative z-10 flex items-center gap-1.5 mt-1">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">person</span>
+<span class="text-xs text-on-surface-variant">Ms. Curie</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Empty Slot (Period 3) -->
+<div class="flex flex-row mt-1 min-h-[5rem]">
+<div class="w-16 flex-shrink-0 flex flex-col items-center pt-3 border-r border-transparent">
+<span class="text-xs font-medium text-on-surface-variant">10:00</span>
+<span class="text-[10px] text-on-surface-variant/60 mt-0.5">10:50</span>
+</div>
+<div class="flex-1 p-2 flex items-center justify-center opacity-30">
+<!-- Intentionally left empty for visual breathing room -->
+</div>
+</div>
+<!-- Period 4 -->
+<div class="flex flex-row mt-1">
+<div class="w-16 flex-shrink-0 flex flex-col items-center pt-3 border-r border-transparent">
+<span class="text-xs font-medium text-on-surface-variant">11:00</span>
+<span class="text-[10px] text-on-surface-variant/60 mt-0.5">11:50</span>
+</div>
+<div class="flex-1 p-2">
+<div class="h-24 w-full rounded-2xl bg-surface-dark border-l-4 border-card-history p-3 flex flex-col justify-between shadow-sm relative overflow-hidden">
+<div class="absolute inset-0 bg-card-history/10"></div>
+<div class="relative z-10">
+<h3 class="font-bold text-lg text-slate-100">History</h3>
+<p class="text-sm text-card-history font-medium">Hall B</p>
+</div>
+<div class="relative z-10 flex items-center gap-1.5 mt-1">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">person</span>
+<span class="text-xs text-on-surface-variant">Mr. Adams</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Period 5 (Lunch) -->
+<div class="flex flex-row mt-1">
+<div class="w-16 flex-shrink-0 flex flex-col items-center pt-3 border-r border-transparent">
+<span class="text-xs font-medium text-on-surface-variant">12:00</span>
+<span class="text-[10px] text-on-surface-variant/60 mt-0.5">13:00</span>
+</div>
+<div class="flex-1 p-2">
+<div class="h-16 w-full rounded-2xl bg-surface-variant/30 border border-dashed border-surface-variant p-3 flex items-center justify-center">
+<span class="text-sm text-on-surface-variant font-medium flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">restaurant</span>
+                                Lunch Break
+                            </span>
+</div>
+</div>
+</div>
+<!-- Period 6 -->
+<div class="flex flex-row mt-1">
+<div class="w-16 flex-shrink-0 flex flex-col items-center pt-3 border-r border-transparent">
+<span class="text-xs font-medium text-on-surface-variant">13:00</span>
+<span class="text-[10px] text-on-surface-variant/60 mt-0.5">13:50</span>
+</div>
+<div class="flex-1 p-2">
+<div class="h-24 w-full rounded-2xl bg-surface-dark border-l-4 border-card-bio p-3 flex flex-col justify-between shadow-sm relative overflow-hidden">
+<div class="absolute inset-0 bg-card-bio/10"></div>
+<div class="relative z-10">
+<h3 class="font-bold text-lg text-slate-100">Biology</h3>
+<p class="text-sm text-card-bio font-medium">Lab 1</p>
+</div>
+<div class="relative z-10 flex items-center gap-1.5 mt-1">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">person</span>
+<span class="text-xs text-on-surface-variant">Dr. Green</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button (FAB) -->
+<div class="absolute bottom-24 right-4 z-30">
+<button class="flex items-center justify-center w-14 h-14 rounded-2xl bg-primary text-white shadow-lg shadow-primary/40 hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+</div>
+<!-- Bottom Navigation Bar -->
+<nav class="border-t border-surface-variant bg-surface-dark px-4 pb-6 pt-2 z-20">
+<div class="flex justify-between items-center">
+<a class="flex flex-1 flex-col items-center justify-end gap-1 rounded-full text-white group" href="#">
+<div class="bg-primary/10 rounded-full px-4 py-1 flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform filled" style="font-variation-settings: 'FILL' 1;">home</span>
+</div>
+<p class="text-white text-[10px] font-medium leading-normal tracking-[0.015em]">Home</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-on-surface-variant hover:text-white transition-colors group" href="#">
+<div class="flex items-center justify-center h-8">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">calendar_month</span>
+</div>
+<p class="text-[10px] font-medium leading-normal tracking-[0.015em]">Calendar</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-on-surface-variant hover:text-white transition-colors group" href="#">
+<div class="flex items-center justify-center h-8">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">check_box</span>
+</div>
+<p class="text-[10px] font-medium leading-normal tracking-[0.015em]">Tasks</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-on-surface-variant hover:text-white transition-colors group" href="#">
+<div class="flex items-center justify-center h-8">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">settings</span>
+</div>
+<p class="text-[10px] font-medium leading-normal tracking-[0.015em]">Settings</p>
+</a>
+</div>
+</nav>
+</div>
+</body></html>

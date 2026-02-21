@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>节次时间设置</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#006493",
+                        "on-primary": "#ffffff",
+                        "primary-container": "#cae6ff",
+                        "on-primary-container": "#001e30",
+                        "background": "#f8fdff",
+                        "surface": "#f8fdff",
+                        "surface-container": "#eef4f9",
+                        "surface-container-high": "#e8eef3",
+                        "outline": "#71787e",
+                    },
+                    fontFamily: {
+                        "display": ["Noto Sans SC", "sans-serif"],
+                        "body": ["Noto Sans SC", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "xl": "1rem", 
+                        "2xl": "1.5rem"
+                    },
+                    boxShadow: {
+                        "elevation-1": "0px 1px 2px 0px rgba(0, 0, 0, 0.3), 0px 1px 3px 1px rgba(0, 0, 0, 0.15)",
+                        "elevation-2": "0px 1px 2px 0px rgba(0, 0, 0, 0.3), 0px 2px 6px 2px rgba(0, 0, 0, 0.15)",
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 2px;
+        }
+        .dashed-line {
+            background-image: linear-gradient(to bottom, #94a3b8 50%, rgba(255, 255, 255, 0) 0%);
+            background-position: left;
+            background-size: 1px 8px;
+            background-repeat: repeat-y;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-body text-[#191c20] antialiased overflow-hidden h-screen flex flex-col relative">
+<header class="flex items-center justify-between p-4 sticky top-0 z-20 bg-background/95 backdrop-blur-md">
+<button class="flex items-center justify-center size-10 rounded-full hover:bg-surface-container-high transition-colors text-[#191c20]">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="text-xl font-normal text-[#191c20]">节次时间设置</h1>
+<button class="flex items-center justify-center h-10 px-4 rounded-full text-primary font-medium text-sm hover:bg-primary/10 transition-colors">
+            保存
+        </button>
+</header>
+<main class="flex-1 overflow-y-auto pb-24 px-4 pt-2">
+<div class="space-y-4 max-w-md mx-auto">
+<div class="flex items-center justify-between pt-2 pb-1 px-1">
+<h2 class="text-sm font-medium text-primary">上午</h2>
+<span class="text-xs text-primary/80 font-medium cursor-pointer hover:underline">自动填充时间</span>
+</div>
+<div class="group relative flex items-center bg-surface-container rounded-xl p-4 active:bg-surface-container-high transition-colors cursor-pointer">
+<div class="flex flex-col justify-center items-center size-10 rounded-full bg-primary-container text-on-primary-container mr-4 shrink-0 font-bold text-lg">
+                    1
+                </div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center mb-0.5">
+<h3 class="font-medium text-base text-[#191c20]">第一节</h3>
+<span class="text-xs font-medium text-outline">45分钟</span>
+</div>
+<p class="text-sm text-[#41484d]">08:00 - 08:45</p>
+</div>
+<button class="ml-2 size-10 flex items-center justify-center rounded-full text-outline hover:bg-[#191c20]/10 transition-colors">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+<div class="flex items-center pl-9 py-0 opacity-70">
+<div class="h-6 w-px bg-outline dashed-line mx-6"></div>
+<span class="text-xs font-medium text-outline">课间休息 10分钟</span>
+</div>
+<div class="group relative flex items-center bg-surface-container rounded-xl p-4 active:bg-surface-container-high transition-colors cursor-pointer">
+<div class="flex flex-col justify-center items-center size-10 rounded-full bg-primary-container text-on-primary-container mr-4 shrink-0 font-bold text-lg">
+                    2
+                </div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center mb-0.5">
+<h3 class="font-medium text-base text-[#191c20]">第二节</h3>
+<span class="text-xs font-medium text-outline">45分钟</span>
+</div>
+<p class="text-sm text-[#41484d]">08:55 - 09:40</p>
+</div>
+<button class="ml-2 size-10 flex items-center justify-center rounded-full text-outline hover:bg-[#191c20]/10 transition-colors">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+<div class="flex items-center pl-9 py-0 opacity-70">
+<div class="h-6 w-px bg-outline dashed-line mx-6"></div>
+<span class="text-xs font-medium text-outline">大课间 30分钟</span>
+</div>
+<div class="group relative flex items-center bg-[#ffedea] rounded-xl p-4 active:bg-[#ffdad6] transition-colors cursor-pointer border border-transparent hover:border-[#ffdad6]">
+<div class="flex items-center justify-center size-10 rounded-full bg-[#ffdad6] text-[#410002] mr-4 shrink-0">
+<span class="material-symbols-outlined text-[20px]">directions_run</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center mb-0.5">
+<h3 class="font-medium text-base text-[#410002]">大课间</h3>
+</div>
+<p class="text-sm text-[#410002]/80">09:40 - 10:10</p>
+</div>
+<button class="ml-2 size-10 flex items-center justify-center rounded-full text-[#410002]/60 hover:bg-[#410002]/10 transition-colors">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+<div class="flex items-center pl-9 py-0 opacity-70">
+<div class="h-6 w-px bg-outline dashed-line mx-6"></div>
+<span class="text-xs font-medium text-outline">休息 5分钟</span>
+</div>
+<div class="group relative flex items-center bg-surface-container rounded-xl p-4 active:bg-surface-container-high transition-colors cursor-pointer">
+<div class="flex flex-col justify-center items-center size-10 rounded-full bg-primary-container text-on-primary-container mr-4 shrink-0 font-bold text-lg">
+                    3
+                </div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center mb-0.5">
+<h3 class="font-medium text-base text-[#191c20]">第三节</h3>
+<span class="text-xs font-medium text-outline">45分钟</span>
+</div>
+<p class="text-sm text-[#41484d]">10:15 - 11:00</p>
+</div>
+<button class="ml-2 size-10 flex items-center justify-center rounded-full text-outline hover:bg-[#191c20]/10 transition-colors">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+<div class="group relative flex items-center bg-surface-container rounded-xl p-4 active:bg-surface-container-high transition-colors cursor-pointer mt-2">
+<div class="flex flex-col justify-center items-center size-10 rounded-full bg-primary-container text-on-primary-container mr-4 shrink-0 font-bold text-lg">
+                    4
+                </div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center mb-0.5">
+<h3 class="font-medium text-base text-[#191c20]">第四节</h3>
+<span class="text-xs font-medium text-outline">45分钟</span>
+</div>
+<p class="text-sm text-[#41484d]">11:10 - 11:55</p>
+</div>
+<button class="ml-2 size-10 flex items-center justify-center rounded-full text-outline hover:bg-[#191c20]/10 transition-colors">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+<div class="flex items-center justify-between pt-6 pb-2 px-1">
+<h2 class="text-sm font-medium text-primary">下午</h2>
+</div>
+<div class="relative overflow-hidden rounded-xl">
+<div class="absolute inset-0 flex items-center justify-end bg-[#ba1a1a] rounded-xl pr-6">
+<span class="text-white font-medium text-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[20px]">delete</span> 删除
+                    </span>
+</div>
+<div class="group relative flex items-center bg-surface-container p-4 rounded-xl translate-x-[-80px] transition-transform cursor-pointer border border-transparent">
+<div class="flex flex-col justify-center items-center size-10 rounded-full bg-primary-container text-on-primary-container mr-4 shrink-0 font-bold text-lg">
+                        5
+                    </div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center mb-0.5">
+<h3 class="font-medium text-base text-[#191c20]">第五节</h3>
+<span class="text-xs font-medium text-outline">40分钟</span>
+</div>
+<p class="text-sm text-[#41484d]">14:00 - 14:40</p>
+</div>
+<button class="ml-2 size-10 flex items-center justify-center rounded-full text-outline hover:bg-[#191c20]/10 transition-colors">
+<span class="material-symbols-outlined text-[20px]">drag_handle</span>
+</button>
+</div>
+</div>
+<button class="w-full py-3.5 mt-2 border border-dashed border-outline/50 rounded-xl flex items-center justify-center text-primary hover:bg-primary/5 transition-colors gap-2">
+<span class="material-symbols-outlined">add</span>
+<span class="font-medium text-sm">添加午休/课间</span>
+</button>
+<div class="h-20"></div> 
+</div>
+</main>
+<div class="absolute bottom-6 right-6 z-30">
+<button class="flex items-center gap-2 px-4 h-14 rounded-2xl bg-primary-container text-on-primary-container shadow-elevation-2 hover:shadow-elevation-1 active:shadow-none transition-all">
+<span class="material-symbols-outlined text-[24px]">add</span>
+<span class="font-medium">添加节次</span>
+</button>
+</div>
+<div class="absolute inset-0 z-40 bg-black/40 backdrop-blur-[2px] hidden flex items-center justify-center p-4">
+</div>
+<div class="absolute inset-0 z-50 bg-[#191c20]/60 flex items-center justify-center p-4 opacity-0 pointer-events-none" style="opacity: 1; pointer-events: auto;">
+<div class="w-full max-w-[320px] bg-surface-container-high rounded-[28px] shadow-elevation-2 overflow-hidden flex flex-col">
+<div class="p-6 pb-4">
+<h3 class="text-sm font-medium text-outline mb-6">设置时间</h3>
+<div class="flex items-end justify-center gap-4 mb-4">
+<div class="bg-primary-container rounded-lg px-3 py-2 flex flex-col items-center min-w-[96px] border-2 border-primary">
+<label class="text-[10px] text-on-primary-container/70 mb-0.5">开始时间</label>
+<span class="text-3xl font-medium text-on-primary-container">08:00</span>
+</div>
+<span class="text-2xl text-outline mb-3">:</span>
+<div class="bg-surface rounded-lg px-3 py-2 flex flex-col items-center min-w-[96px] border border-transparent">
+<label class="text-[10px] text-outline mb-0.5">结束时间</label>
+<span class="text-3xl font-medium text-[#191c20]">08:45</span>
+</div>
+</div>
+</div>
+<div class="px-4 pb-4 flex justify-center">
+<div class="relative size-[256px] rounded-full bg-surface-container flex items-center justify-center">
+<div class="absolute size-2 bg-primary rounded-full z-20"></div>
+<div class="absolute w-[2px] h-[110px] bg-primary bottom-1/2 left-1/2 -translate-x-1/2 origin-bottom rotate-[240deg] z-10 flex flex-col justify-start items-center">
+<div class="size-10 rounded-full bg-primary text-on-primary flex items-center justify-center text-lg font-medium -mt-5 rotate-[-240deg]">
+                            8
+                        </div>
+</div>
+<div class="absolute top-2 font-medium text-[#191c20]">12</div>
+<div class="absolute right-3 font-medium text-[#191c20]">3</div>
+<div class="absolute bottom-2 font-medium text-[#191c20]">6</div>
+<div class="absolute left-3 font-medium text-[#191c20]">9</div>
+</div>
+</div>
+<div class="px-4 pb-2">
+<button class="p-2 rounded-full hover:bg-[#191c20]/10 text-outline">
+<span class="material-symbols-outlined text-[24px]">keyboard</span>
+</button>
+</div>
+<div class="flex items-center justify-end gap-2 p-4 pt-0">
+<button class="px-4 py-2.5 rounded-full text-primary font-medium hover:bg-primary/10 transition-colors text-sm">
+                    取消
+                </button>
+<button class="px-4 py-2.5 rounded-full text-primary font-medium hover:bg-primary/10 transition-colors text-sm">
+                    确定
+                </button>
+</div>
+</div>
+</div>
+
+</body></html>

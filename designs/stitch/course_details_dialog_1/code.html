@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Course Details Dialog</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                        "surface-dark": "#1E2936", // Slightly lighter than background-dark for the sheet
+                        "on-surface": "#E2E8F0",
+                        "secondary-text": "#94A3B8",
+                        "danger": "#EF4444",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar to ensure clean look */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased overflow-hidden h-screen w-screen relative text-slate-900 dark:text-slate-100">
+<!-- Background Simulation (Schedule View behind the sheet) -->
+<div aria-hidden="true" class="absolute inset-0 flex flex-col p-4 opacity-50 pointer-events-none">
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-xl font-bold">Today's Schedule</h2>
+<div class="w-8 h-8 rounded-full bg-slate-700"></div>
+</div>
+<div class="flex-1 space-y-4">
+<!-- Simulated schedule items -->
+<div class="h-24 rounded-xl bg-slate-800/50 border-l-4 border-emerald-500 p-3"></div>
+<div class="h-24 rounded-xl bg-slate-800/50 border-l-4 border-blue-500 p-3"></div>
+<div class="h-24 rounded-xl bg-slate-800/50 border-l-4 border-purple-500 p-3"></div>
+<div class="h-24 rounded-xl bg-slate-800/50 border-l-4 border-orange-500 p-3"></div>
+</div>
+</div>
+<!-- Overlay/Backdrop -->
+<div class="absolute inset-0 z-40 bg-black/60 backdrop-blur-[2px] transition-opacity duration-300">
+<!-- Bottom Sheet Container -->
+<div class="flex h-full w-full flex-col justify-end">
+<!-- The Sheet -->
+<div class="relative w-full rounded-t-[28px] bg-surface-dark shadow-[0_-4px_24px_rgba(0,0,0,0.4)] flex flex-col max-h-[85vh]">
+<!-- Drag Handle Area -->
+<div class="flex w-full items-center justify-center pt-4 pb-2">
+<div class="h-1.5 w-12 rounded-full bg-slate-600/50"></div>
+</div>
+<!-- Header -->
+<div class="flex items-start justify-between px-6 pt-4 pb-2">
+<div class="flex-1 pr-4">
+<h1 class="text-on-surface text-3xl font-bold tracking-tight leading-tight">Advanced Mathematics</h1>
+<p class="text-secondary-text text-sm mt-1 font-medium">MAT-201 • Section A</p>
+</div>
+<button class="flex items-center justify-center rounded-full p-2 text-secondary-text hover:bg-white/10 transition-colors -mr-2 -mt-2">
+<span class="material-symbols-outlined text-[24px]">close</span>
+</button>
+</div>
+<!-- Content Scroll Area -->
+<div class="flex-1 overflow-y-auto px-6 py-4 space-y-6">
+<!-- Detail Rows -->
+<div class="flex flex-col gap-5">
+<!-- Time -->
+<div class="flex items-start gap-4">
+<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/20 text-primary">
+<span class="material-symbols-outlined text-[24px]">schedule</span>
+</div>
+<div class="flex flex-col pt-1">
+<span class="text-sm font-medium text-secondary-text">Time</span>
+<span class="text-lg font-normal text-on-surface">08:00 - 09:35</span>
+</div>
+</div>
+<!-- Location -->
+<div class="flex items-start gap-4">
+<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/20 text-primary">
+<span class="material-symbols-outlined text-[24px]">location_on</span>
+</div>
+<div class="flex flex-col pt-1">
+<span class="text-sm font-medium text-secondary-text">Location</span>
+<span class="text-lg font-normal text-on-surface">Room 402, Science Building</span>
+</div>
+</div>
+<!-- Teacher -->
+<div class="flex items-start gap-4">
+<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/20 text-primary">
+<span class="material-symbols-outlined text-[24px]">person</span>
+</div>
+<div class="flex flex-col pt-1">
+<span class="text-sm font-medium text-secondary-text">Teacher</span>
+<span class="text-lg font-normal text-on-surface">Prof. Alan Turing</span>
+</div>
+</div>
+<!-- Weeks -->
+<div class="flex items-start gap-4">
+<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/20 text-primary">
+<span class="material-symbols-outlined text-[24px]">calendar_month</span>
+</div>
+<div class="flex flex-col pt-1">
+<span class="text-sm font-medium text-secondary-text">Duration</span>
+<span class="text-lg font-normal text-on-surface">Weeks 1-16 (Odd)</span>
+</div>
+</div>
+</div>
+<!-- Note or Description (Optional extra detail) -->
+<div class="rounded-2xl bg-slate-800/50 p-4 mt-2">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary text-[20px]">info</span>
+<span class="text-sm font-semibold text-on-surface">Course Notes</span>
+</div>
+<p class="text-secondary-text text-sm leading-relaxed">
+                             Please bring your scientific calculator and the textbook "Calculus Vol. 2". Late submissions for homework will not be accepted.
+                         </p>
+</div>
+</div>
+<!-- Action Footer -->
+<div class="flex flex-col gap-3 px-6 pb-8 pt-4 border-t border-slate-700/50 bg-surface-dark">
+<!-- Edit Button (Filled Primary) -->
+<button class="group relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-full bg-primary py-3.5 px-6 transition-all active:scale-[0.98]">
+<div class="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors"></div>
+<span class="material-symbols-outlined text-white text-[20px]">edit</span>
+<span class="text-base font-semibold text-white">Edit Course</span>
+</button>
+<!-- Delete Button (Outlined/Text Danger) -->
+<button class="group flex w-full items-center justify-center gap-2 rounded-full border border-slate-600/50 bg-transparent py-3.5 px-6 transition-all hover:bg-danger/10 hover:border-danger/50 active:scale-[0.98]">
+<span class="material-symbols-outlined text-danger text-[20px]">delete</span>
+<span class="text-base font-semibold text-danger">Delete Class</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</body></html>
