@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import '../models/time_schedule.dart';
 import '../utils/constants.dart';
 
 class DatabaseHelper {
@@ -27,7 +26,6 @@ class DatabaseHelper {
       path,
       version: 1,
       onCreate: _onCreate,
-      onUpgrade: _onUpgrade,
     );
   }
 
@@ -85,10 +83,6 @@ class DatabaseHelper {
     await _insertDefaultTimeSchedule(db);
   }
 
-  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    
-  }
-
   Future<void> _insertDefaultTimeSchedule(Database db) async {
     final defaultSlots = Constants.defaultTimeSlots;
     final slotsJson = defaultSlots
@@ -112,13 +106,6 @@ class DatabaseHelper {
   Future<void> close() async {
     final db = await database;
     await db.close();
-    _database = null;
-  }
-
-  Future<void> resetDatabase() async {
-    final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'sleepdown.db');
-    await deleteDatabase(path);
     _database = null;
   }
 }
