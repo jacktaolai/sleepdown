@@ -8,7 +8,16 @@ import '../../providers/providers.dart';
 import '../../theme/app_theme.dart';
 
 class WeekCalendarStrip extends ConsumerWidget {
-  const WeekCalendarStrip({super.key});
+  final double columnWidth;
+  final double timeColumnWidth;
+
+  const WeekCalendarStrip({
+    super.key,
+    this.columnWidth = 0,
+    this.timeColumnWidth = 48.0,
+  });
+
+  static const double defaultTimeColumnWidth = 48.0;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -16,6 +25,12 @@ class WeekCalendarStrip extends ConsumerWidget {
     final dateRange = ref.watch(weekDateRangeProvider(currentWeek));
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+
+    // 使用传入的列宽或计算默认值
+    final effectiveTimeColumnWidth = timeColumnWidth != 0 ? timeColumnWidth : defaultTimeColumnWidth;
+    final effectiveColumnWidth = columnWidth != 0
+        ? columnWidth
+        : (MediaQuery.of(context).size.width - 32 - effectiveTimeColumnWidth) / 7;
 
     // Calculate dates for the week
     final days = List.generate(7, (index) {
@@ -25,86 +40,105 @@ class WeekCalendarStrip extends ConsumerWidget {
     final month = dateRange.start.month;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: AppTheme.surfaceVariant.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
-          // Month Indicator
-          Container(
-            width: 48,
-            padding: const EdgeInsets.only(right: 8),
-            decoration: const BoxDecoration(
-              border: Border(
-                right: BorderSide(
-                  color: Color(0x33C3C7CF), // outlineVariant with opacity
+          // Month Indicator - 与底部时间列对齐
+          SizedBox(
+            width: effectiveTimeColumnWidth,
+            child: Container(
+              height: 56,
+              alignment: Alignment.center,
+              decoration: const BoxDecoration(
+                border: Border(
+                  right: BorderSide(
+                    color: Color(0x33C3C7CF),
+                    width: 1,
+                  ),
                 ),
               ),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  '$month',
-                  style: theme.textTheme.labelMedium?.copyWith(
-                    color: AppTheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 16,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '$month',
+                    style: theme.textTheme.labelMedium?.copyWith(
+                      color: AppTheme.onSurfaceVariant,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16,
+                    ),
                   ),
-                ),
-                Text(
-                  '月',
-                  style: theme.textTheme.labelMedium?.copyWith(
-                    color: AppTheme.onSurfaceVariant,
-                    fontSize: 12,
+                  Text(
+                    '月',
+                    style: theme.textTheme.labelMedium?.copyWith(
+                      color: AppTheme.onSurfaceVariant,
+                      fontSize: 12,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-          // Days Row
-          Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: days.map((date) {
-                final isToday = ref.watch(isTodayProvider((week: currentWeek, dayOfWeek: date.weekday)));
-                // debugPrint('Date: $date, isToday: $isToday');
-                final dayName = _getDayName(date.weekday);
-                
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      dayName,
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: AppTheme.onSurfaceVariant,
+          // Days Row - 每列宽度与底部课程网格一致
+          ...List.generate(7, (index) {
+            final date = days[index];
+            final isToday = ref.watch(isTodayProvider((week: currentWeek, dayOfWeek: date.weekday)));
+            final dayName = _getDayName(date.weekday);
+
+            return Container(
+              width: effectiveColumnWidth,
+              height: 56,
+              alignment: Alignment.center,
+              decoration: const BoxDecoration(
+                border: Border(
+                  right: BorderSide(
+                    color: Color(0x1AC3C7CF),
+                    width: 1,
+                  ),
+                ),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    dayName,
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: AppTheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Container(
+                    width: 32,
+                    height: 32,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: isToday ? colorScheme.primary : null,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Text(
+                      '${date.day}',
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        color: isToday ? colorScheme.onPrimary : colorScheme.onSurface,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Container(
-                      width: 32,
-                      height: 32,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: isToday ? colorScheme.primary : null,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Text(
-                        '${date.day}',
-                        style: theme.textTheme.labelLarge?.copyWith(
-                          color: isToday ? colorScheme.onPrimary : colorScheme.onSurface,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              }).toList(),
-            ),
-          ),
+                  ),
+                ],
+              ),
+            );
+          }),
         ],
       ),
     );

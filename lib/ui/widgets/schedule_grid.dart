@@ -8,151 +8,149 @@ import 'course_card.dart';
 class ScheduleGrid extends ConsumerWidget {
   final List<Course> courses;
   final int currentWeek;
+  final double columnWidth;
+  final double timeColumnWidth;
 
   const ScheduleGrid({
     super.key,
     required this.courses,
     required this.currentWeek,
+    this.columnWidth = 0, // 默认值会被忽略，需要外部传入
+    this.timeColumnWidth = 48.0,
   });
 
   static const double sectionHeight = 64.0;
-  static const double timeColumnWidth = 48.0;
+  static const double defaultTimeColumnWidth = 48.0;
   static const int totalSections = 12;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        // Calculate column width based on available width minus time column
-        final availableWidth = constraints.maxWidth - timeColumnWidth;
-        final columnWidth = availableWidth / 7;
+    // 使用传入的 columnWidth，或计算默认值
+    final effectiveTimeColumnWidth = timeColumnWidth != 0 ? timeColumnWidth : defaultTimeColumnWidth;
+    final effectiveColumnWidth = columnWidth != 0
+        ? columnWidth
+        : (MediaQuery.of(context).size.width - 32 - effectiveTimeColumnWidth) / 7;
 
-        return SingleChildScrollView(
-          padding: const EdgeInsets.only(bottom: 24),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Time Column
-              SizedBox(
-                width: timeColumnWidth,
-                child: Column(
-                  children: List.generate(totalSections, (index) {
-                    final section = index + 1;
-                    return Container(
-                      height: sectionHeight,
-                      alignment: Alignment.center,
-                      decoration: const BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(
-                            color: Color(0x1AC3C7CF), // outlineVariant with low opacity
-                            width: 1,
-                          ),
-                          right: BorderSide(
-                            color: Color(0x1AC3C7CF),
-                            width: 1,
-                          ),
-                        ),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.only(bottom: 24),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Time Column
+          SizedBox(
+            width: effectiveTimeColumnWidth,
+            child: Column(
+              children: List.generate(totalSections, (index) {
+                final section = index + 1;
+                return Container(
+                  height: sectionHeight,
+                  alignment: Alignment.center,
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: Color(0x1AC3C7CF), // outlineVariant with low opacity
+                        width: 1,
                       ),
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              '$section',
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                color: AppTheme.onSurface,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 14,
-                              ),
-                            ),
-                            Text(
-                              _getTimeForSection(section),
-                              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                color: AppTheme.onSurfaceVariant,
-                                fontSize: 8,
-                                height: 1.1,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
+                      right: BorderSide(
+                        color: Color(0x1AC3C7CF),
+                        width: 1,
+                      ),
+                    ),
+                  ),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          '$section',
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: AppTheme.onSurface,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                          ),
                         ),
+                        Text(
+                          _getTimeForSection(section),
+                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                            color: AppTheme.onSurfaceVariant,
+                            fontSize: 8,
+                            height: 1.1,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+            ),
+          ),
+          // Course Grid Area
+          Expanded(
+            child: SizedBox(
+              height: totalSections * sectionHeight,
+              child: Stack(
+                children: [
+                  // Horizontal Grid Lines
+                  Column(
+                    children: List.generate(totalSections, (index) {
+                      return Container(
+                        height: sectionHeight,
+                        decoration: const BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: Color(0x1AC3C7CF),
+                              width: 1,
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                  // Vertical Grid Lines
+                  Row(
+                    children: List.generate(7, (index) {
+                      return Container(
+                        width: effectiveColumnWidth,
+                        height: totalSections * sectionHeight,
+                        decoration: const BoxDecoration(
+                          border: Border(
+                            right: BorderSide(
+                              color: Color(0x1AC3C7CF),
+                              width: 1,
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                  // Courses
+                  ...courses.map((course) {
+                    final isActive = course.isActiveInWeek(currentWeek);
+
+                    return Positioned(
+                      top: (course.startSection - 1) * sectionHeight,
+                      left: (course.dayOfWeek - 1) * effectiveColumnWidth,
+                      width: effectiveColumnWidth,
+                      height: (course.endSection - course.startSection + 1) * sectionHeight,
+                      child: CourseCard(
+                        course: course,
+                        isCurrentWeek: isActive,
+                        onTap: () {
+                          Navigator.of(context).pushNamed(
+                            '/course/${course.id}',
+                          );
+                        },
                       ),
                     );
                   }),
-                ),
+                ],
               ),
-              // Course Grid Area
-              Expanded(
-                child: SizedBox(
-                  height: totalSections * sectionHeight,
-                  child: Stack(
-                    children: [
-                      // Horizontal Grid Lines
-                      Column(
-                        children: List.generate(totalSections, (index) {
-                          return Container(
-                            height: sectionHeight,
-                            decoration: const BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(
-                                  color: Color(0x1AC3C7CF),
-                                  width: 1,
-                                ),
-                              ),
-                            ),
-                          );
-                        }),
-                      ),
-                      // Vertical Grid Lines
-                      Row(
-                        children: List.generate(7, (index) {
-                          return Container(
-                            width: columnWidth,
-                            height: totalSections * sectionHeight,
-                            decoration: const BoxDecoration(
-                              border: Border(
-                                right: BorderSide(
-                                  color: Color(0x1AC3C7CF),
-                                  width: 1,
-                                ),
-                              ),
-                            ),
-                          );
-                        }),
-                      ),
-                      // Courses
-                      ...courses.map((course) {
-                        final isActive = course.isActiveInWeek(currentWeek);
-                        // Only show if active or if we want to show inactive courses (design implies yes)
-                        // But we need to handle overlapping.
-                        // For MVP, let's just show them.
-                        
-                        return Positioned(
-                          top: (course.startSection - 1) * sectionHeight,
-                          left: (course.dayOfWeek - 1) * columnWidth,
-                          width: columnWidth,
-                          height: (course.endSection - course.startSection + 1) * sectionHeight,
-                          child: CourseCard(
-                            course: course,
-                            isCurrentWeek: isActive,
-                            onTap: () {
-                              // Navigate to detail
-                              Navigator.of(context).pushNamed(
-                                '/course/${course.id}',
-                              );
-                            },
-                          ),
-                        );
-                      }),
-                    ],
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 
