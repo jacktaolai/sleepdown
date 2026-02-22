@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../theme/app_theme.dart';
 import 'home_screen.dart';
+import 'add_course_screen.dart';
 
 class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key});
@@ -15,8 +16,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
   final List<Widget> _screens = const [
     HomeScreen(),
-    CoursesScreen(),
-    ScheduleScreen(),
+    AddCourseScreen(),
     SettingsScreen(),
   ];
 
@@ -32,21 +32,17 @@ class _MainScreenState extends ConsumerState<MainScreen> {
           });
         },
         backgroundColor: AppTheme.surface,
+        indicatorColor: AppTheme.secondaryContainer,
         destinations: const [
           NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
-            label: '首页',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.book_outlined),
-            selectedIcon: Icon(Icons.book),
-            label: '课程',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.calendar_today_outlined),
-            selectedIcon: Icon(Icons.calendar_today),
+            icon: Icon(Icons.table_chart_outlined),
+            selectedIcon: Icon(Icons.table_chart),
             label: '课表',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.add_box_outlined),
+            selectedIcon: Icon(Icons.add_box),
+            label: '导入',
           ),
           NavigationDestination(
             icon: Icon(Icons.settings_outlined),
@@ -54,38 +50,6 @@ class _MainScreenState extends ConsumerState<MainScreen> {
             label: '设置',
           ),
         ],
-      ),
-    );
-  }
-}
-
-class CoursesScreen extends StatelessWidget {
-  const CoursesScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('课程管理'),
-      ),
-      body: const Center(
-        child: Text('课程管理页面'),
-      ),
-    );
-  }
-}
-
-class ScheduleScreen extends StatelessWidget {
-  const ScheduleScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('课表'),
-      ),
-      body: const Center(
-        child: Text('课表页面'),
       ),
     );
   }

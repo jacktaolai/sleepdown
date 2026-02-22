@@ -104,7 +104,7 @@ class HomeScreen extends ConsumerWidget {
           Row(
             children: [
               _buildIconButton(context, Icons.calendar_month_outlined, () {
-                // Show week picker
+                _showWeekPicker(context, ref, currentWeek);
               }),
               _buildIconButton(context, Icons.download_outlined, () {
                 // Download schedule
@@ -129,6 +129,198 @@ class HomeScreen extends ConsumerWidget {
         highlightColor: AppTheme.onSurfaceVariant.withValues(alpha: 0.12),
       ),
     );
+  }
+
+  void _showWeekPicker(BuildContext context, WidgetRef ref, int currentWeek) {
+    final totalWeeks = ref.read(settingsProvider).totalWeeks;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppTheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return _WeekPickerSheet(
+          currentWeek: currentWeek,
+          totalWeeks: totalWeeks,
+          onWeekSelected: (week) {
+            ref.read(currentWeekProvider.notifier).state = week;
+            Navigator.pop(context);
+          },
+          onGoToCurrentWeek: () {
+            final semesterStartDate = ref.read(settingsProvider).semesterStartDate;
+            if (semesterStartDate != null) {
+              ref.read(currentWeekProvider.notifier).state = _calculateCurrentWeek(semesterStartDate);
+            }
+            Navigator.pop(context);
+          },
+        );
+      },
+    );
+  }
+
+  int _calculateCurrentWeek(DateTime semesterStart) {
+    final now = DateTime.now();
+    final difference = now.difference(semesterStart).inDays;
+    return (difference ~/ 7) + 1;
+  }
+}
+
+class _WeekPickerSheet extends StatelessWidget {
+  final int currentWeek;
+  final int totalWeeks;
+  final ValueChanged<int> onWeekSelected;
+  final VoidCallback onGoToCurrentWeek;
+
+  const _WeekPickerSheet({
+    required this.currentWeek,
+    required this.totalWeeks,
+    required this.onWeekSelected,
+    required this.onGoToCurrentWeek,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final actualCurrentWeek = _calculateActualCurrentWeek();
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 标题和关闭按钮
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '选择周数',
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: const Icon(Icons.close),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+
+          // 周数网格 (4列)
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              childAspectRatio: 1.5,
+            ),
+            itemCount: totalWeeks,
+            itemBuilder: (context, index) {
+              final week = index + 1;
+              return _buildWeekItem(context, week, actualCurrentWeek);
+            },
+          ),
+          const SizedBox(height: 20),
+
+          // 回到本周按钮
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton(
+              onPressed: onGoToCurrentWeek,
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                side: BorderSide(color: AppTheme.primary),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text('回到本周'),
+            ),
+          ),
+          const SizedBox(height: 8),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWeekItem(BuildContext context, int week, int actualCurrentWeek) {
+    final theme = Theme.of(context);
+    final isSelected = week == currentWeek;
+    final isCurrentWeek = week == actualCurrentWeek;
+    final isPast = week < actualCurrentWeek;
+
+    Color backgroundColor;
+    Color textColor;
+    Color borderColor;
+
+    if (isSelected) {
+      backgroundColor = AppTheme.primary;
+      textColor = AppTheme.onPrimary;
+      borderColor = AppTheme.primary;
+    } else if (isPast) {
+      backgroundColor = AppTheme.surfaceContainerLow;
+      textColor = AppTheme.onSurfaceVariant;
+      borderColor = AppTheme.outlineVariant;
+    } else if (isCurrentWeek) {
+      backgroundColor = AppTheme.secondaryContainer;
+      textColor = AppTheme.onSecondaryContainer;
+      borderColor = AppTheme.secondary;
+    } else {
+      // isFuture
+      backgroundColor = AppTheme.surface;
+      textColor = AppTheme.onSurface;
+      borderColor = AppTheme.outlineVariant;
+    }
+
+    return GestureDetector(
+      onTap: () => onWeekSelected(week),
+      child: Container(
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: borderColor, width: isCurrentWeek ? 2 : 1),
+        ),
+        child: Stack(
+          children: [
+            Center(
+              child: Text(
+                '第$week周',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: textColor,
+                  fontWeight: isSelected || isCurrentWeek ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
+            ),
+            if (isCurrentWeek)
+              Positioned(
+                top: 2,
+                right: 2,
+                child: Container(
+                  width: 6,
+                  height: 6,
+                  decoration: const BoxDecoration(
+                    color: AppTheme.tertiary,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  int _calculateActualCurrentWeek() {
+    // 简化计算，实际应该根据设置中的学期开始日期计算
+    final now = DateTime.now();
+    final semesterStart = DateTime(2026, 2, 16);
+    final difference = now.difference(semesterStart).inDays;
+    return (difference ~/ 7) + 1;
   }
 }
 

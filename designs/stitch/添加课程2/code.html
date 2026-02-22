@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Modern MD3 Add Course Final Refinement</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;family=Noto+Sans+SC:wght@300;400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "md-sys-color-primary": "#0061a4",
+                        "md-sys-color-on-primary": "#ffffff",
+                        "md-sys-color-primary-container": "#d1e4ff",
+                        "md-sys-color-on-primary-container": "#001d36",
+                        "md-sys-color-secondary": "#535f70",
+                        "md-sys-color-on-secondary": "#ffffff",
+                        "md-sys-color-secondary-container": "#d7e3f7",
+                        "md-sys-color-on-secondary-container": "#101c2b",
+                        "md-sys-color-tertiary": "#6b5778",
+                        "md-sys-color-on-tertiary": "#ffffff",
+                        "md-sys-color-tertiary-container": "#f2daff",
+                        "md-sys-color-on-tertiary-container": "#251431",
+                        "md-sys-color-error": "#ba1a1a",
+                        "md-sys-color-on-error": "#ffffff",
+                        "md-sys-color-error-container": "#ffdad6",
+                        "md-sys-color-on-error-container": "#410002",
+                        "md-sys-color-surface": "#fdfcff", 
+                        "md-sys-color-surface-container-low": "#f6f8fc", 
+                        "md-sys-color-surface-container": "#f0f4f9",
+                        "md-sys-color-on-surface": "#1a1c1e",
+                        "md-sys-color-surface-variant": "#dfe2eb",
+                        "md-sys-color-on-surface-variant": "#43474e",
+                        "md-sys-color-outline": "#73777f",
+                        "md-sys-color-outline-variant": "#c3c7cf",
+                    },
+                    fontFamily: {
+                        "display": ["Roboto", "Noto Sans SC", "sans-serif"],
+                        "body": ["Roboto", "Noto Sans SC", "sans-serif"],
+                    },
+                    borderRadius: {
+                        'lg': '8px', 
+                        'xl': '12px',
+                        '2xl': '16px',
+                        '3xl': '24px',
+                        'full': '9999px',
+                    },
+                    boxShadow: {
+                        'elevation-1': '0px 1px 2px rgba(0, 0, 0, 0.3), 0px 1px 3px 1px rgba(0, 0, 0, 0.15)',
+                        'elevation-2': '0px 1px 2px rgba(0, 0, 0, 0.3), 0px 2px 6px 2px rgba(0, 0, 0, 0.15)',
+                        'elevation-3': '0px 1px 3px 0px rgba(0, 0, 0, 0.3), 0px 4px 8px 3px rgba(0, 0, 0, 0.15)',
+                        'fab': '0px 4px 8px 3px rgba(0, 0, 0, 0.15), 0px 1px 3px 0px rgba(0, 0, 0, 0.3)',
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .ripple {
+            position: relative;
+            overflow: hidden;
+        }
+        .ripple::after {
+            content: "";
+            display: block;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            background-image: radial-gradient(circle, #000 10%, transparent 10.01%);
+            background-repeat: no-repeat;
+            background-position: 50%;
+            transform: scale(10, 10);
+            opacity: 0;
+            transition: transform .5s, opacity 1s;
+        }
+        .ripple:active::after {
+            transform: scale(0, 0);
+            opacity: 0.1;
+            transition: 0s;
+        }.md3-filled-field-container {
+            position: relative;
+            background-color: #f0f4f9; 
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            transition: background-color 0.2s;
+        }
+        .md3-filled-field-container:hover {
+            background-color: #e2e7ee;
+        }
+        .md3-filled-field-container::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background-color: #73777f; 
+            transition: height 0.2s, background-color 0.2s;
+        }
+        .md3-filled-field-input:focus ~ .md3-filled-field-container::after,
+        .md3-filled-field-container:focus-within::after {
+            height: 2px;
+            background-color: #0061a4; 
+        }
+        .md3-filled-field-input {
+            width: 100%;
+            height: 56px;
+            padding: 24px 16px 8px;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            line-height: 24px;
+            color: #1a1c1e;
+            caret-color: #0061a4;
+        }
+        .md3-filled-field-label {
+            position: absolute;
+            left: 16px;
+            top: 16px;
+            font-size: 16px;
+            line-height: 24px;
+            color: #43474e;
+            pointer-events: none;
+            transition: all 0.2s ease-out;
+            transform-origin: top left;
+        }
+        .md3-filled-field-input:focus ~ .md3-filled-field-label,
+        .md3-filled-field-input:not(:placeholder-shown) ~ .md3-filled-field-label {
+            top: 8px;
+            font-size: 12px;
+            line-height: 16px;
+            color: #0061a4;
+        }
+        .md3-filled-field-input:not(:focus):not(:placeholder-shown) ~ .md3-filled-field-label {
+            color: #43474e;
+        }.slot-card {
+            transition: all 0.3s cubic-bezier(0.2, 0.0, 0, 1.0);
+        }
+        .slot-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0px 4px 8px 3px rgba(0, 0, 0, 0.15);
+        }.input-chip {
+            background-color: transparent;
+            border: 1px solid #73777f;
+            color: #1a1c1e;
+            transition: all 0.2s;
+        }
+        .input-chip:active, .input-chip.active {
+            background-color: #d1e4ff;
+            border-color: transparent;
+            color: #001d36;
+        }
+        body {
+            background-color: #f6f8fc;min-height: 100vh;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body text-md-sys-color-on-surface antialiased overflow-hidden">
+<div class="relative flex h-screen w-full flex-col overflow-hidden max-w-md mx-auto shadow-2xl bg-md-sys-color-surface-container-low">
+<header class="flex items-center justify-between px-4 h-16 bg-md-sys-color-surface/90 backdrop-blur-sm z-20 sticky top-0 shadow-sm">
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-full ripple text-md-sys-color-on-surface hover:bg-md-sys-color-on-surface/10">
+<span class="material-symbols-outlined font-normal text-[24px]">arrow_back</span>
+</button>
+<h1 class="text-[22px] leading-7 text-md-sys-color-on-surface font-normal">添加课程</h1>
+</div>
+<button class="h-10 px-6 flex items-center justify-center rounded-full ripple bg-md-sys-color-primary text-md-sys-color-on-primary font-medium text-[14px] shadow-elevation-1 hover:shadow-elevation-2 transition-shadow">
+                保存
+            </button>
+</header>
+<main class="flex-1 overflow-y-auto no-scrollbar relative w-full px-4 pb-32">
+<div class="mt-4 flex flex-col gap-6">
+<div class="flex flex-col gap-6 bg-md-sys-color-surface p-4 rounded-xl shadow-sm">
+<div class="md3-filled-field-container">
+<input class="md3-filled-field-input" id="courseName" placeholder=" " type="text" value=""/>
+<label class="md3-filled-field-label" for="courseName">课程名称</label>
+</div>
+<div class="flex flex-col gap-3">
+<span class="text-sm font-medium text-md-sys-color-on-surface-variant pl-1">课程颜色</span>
+<div class="flex gap-4 overflow-x-auto no-scrollbar py-2 px-1 items-center">
+<div class="flex flex-col items-center gap-1 shrink-0">
+<button class="w-10 h-10 rounded-full bg-[#ffd8e4] ring-2 ring-offset-2 ring-offset-[#fdfcff] ring-md-sys-color-primary shadow-elevation-1 ripple flex items-center justify-center transition-transform active:scale-95">
+<span class="material-symbols-outlined text-[#31111d] text-[20px]">check</span>
+</button>
+</div>
+<button class="w-10 h-10 rounded-full bg-[#d1e4ff] hover:shadow-elevation-1 ripple shrink-0 transition-all active:scale-95"></button>
+<button class="w-10 h-10 rounded-full bg-[#e8def8] hover:shadow-elevation-1 ripple shrink-0 transition-all active:scale-95"></button>
+<button class="w-10 h-10 rounded-full bg-[#bcece0] hover:shadow-elevation-1 ripple shrink-0 transition-all active:scale-95"></button>
+<button class="w-10 h-10 rounded-full bg-[#e0e0ff] hover:shadow-elevation-1 ripple shrink-0 transition-all active:scale-95"></button>
+<button class="w-10 h-10 rounded-full bg-[#fff9c4] hover:shadow-elevation-1 ripple shrink-0 transition-all active:scale-95"></button>
+<button class="w-10 h-10 rounded-full bg-gradient-to-br from-red-200 via-green-200 to-blue-200 border border-md-sys-color-outline/20 hover:shadow-elevation-1 ripple shrink-0 flex items-center justify-center transition-all active:scale-95 ml-1">
+<span class="material-symbols-outlined text-md-sys-color-on-surface-variant text-[20px]">colorize</span>
+</button>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between px-1">
+<h2 class="text-title-medium font-medium text-md-sys-color-on-surface">时间段</h2>
+</div>
+<div class="flex flex-col gap-4">
+<div class="slot-card bg-md-sys-color-surface rounded-2xl p-4 shadow-sm border border-md-sys-color-outline-variant/30 relative overflow-hidden">
+<div class="flex justify-between items-center mb-4 pb-2 border-b border-md-sys-color-outline-variant/20">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-md-sys-color-primary-container flex items-center justify-center text-md-sys-color-on-primary-container">
+<span class="text-sm font-bold">1</span>
+</div>
+<span class="text-md-sys-color-on-surface font-medium text-base">上课时间</span>
+</div>
+<button class="w-8 h-8 flex items-center justify-center rounded-full ripple text-md-sys-color-on-surface-variant hover:bg-md-sys-color-error-container hover:text-md-sys-color-on-error-container transition-colors">
+<span class="material-symbols-outlined font-light text-[20px]">delete</span>
+</button>
+</div>
+<div class="grid grid-cols-1 gap-4">
+<div class="flex gap-3">
+<button class="flex-1 h-12 rounded-xl border border-md-sys-color-outline/40 bg-transparent flex items-center justify-between px-4 ripple hover:bg-md-sys-color-surface-variant/30 active:bg-md-sys-color-secondary-container active:border-transparent transition-all">
+<span class="text-sm text-md-sys-color-on-surface">周一</span>
+<span class="material-symbols-outlined text-[18px] text-md-sys-color-outline">expand_more</span>
+</button>
+<button class="flex-1 h-12 rounded-xl border border-md-sys-color-outline/40 bg-transparent flex items-center justify-between px-4 ripple hover:bg-md-sys-color-surface-variant/30 active:bg-md-sys-color-secondary-container active:border-transparent transition-all">
+<span class="text-sm text-md-sys-color-on-surface">1-2节</span>
+<span class="material-symbols-outlined text-[18px] text-md-sys-color-outline">expand_more</span>
+</button>
+</div>
+<div class="space-y-3">
+<div class="relative flex items-center bg-md-sys-color-surface-container rounded-xl px-3 h-12 group focus-within:ring-1 focus-within:ring-md-sys-color-primary transition-all">
+<span class="material-symbols-outlined text-md-sys-color-primary/80 text-[20px] mr-3">person</span>
+<input class="flex-1 bg-transparent border-none outline-none text-sm text-md-sys-color-on-surface placeholder:text-md-sys-color-outline/70 h-full" placeholder="任课教师" type="text"/>
+</div>
+<div class="relative flex items-center bg-md-sys-color-surface-container rounded-xl px-3 h-12 group focus-within:ring-1 focus-within:ring-md-sys-color-primary transition-all">
+<span class="material-symbols-outlined text-md-sys-color-primary/80 text-[20px] mr-3">location_on</span>
+<input class="flex-1 bg-transparent border-none outline-none text-sm text-md-sys-color-on-surface placeholder:text-md-sys-color-outline/70 h-full" placeholder="上课教室" type="text"/>
+</div>
+<div class="relative flex items-center bg-md-sys-color-surface-container rounded-xl px-3 h-12 group focus-within:ring-1 focus-within:ring-md-sys-color-primary transition-all">
+<span class="material-symbols-outlined text-md-sys-color-primary/80 text-[20px] mr-3">date_range</span>
+<input class="flex-1 bg-transparent border-none outline-none text-sm text-md-sys-color-on-surface placeholder:text-md-sys-color-outline/70 h-full" placeholder="上课周数" type="text" value="1-16周"/>
+</div>
+<div class="relative flex items-start pt-3 bg-md-sys-color-surface-container rounded-xl px-3 group focus-within:ring-1 focus-within:ring-md-sys-color-primary transition-all">
+<span class="material-symbols-outlined text-md-sys-color-primary/80 text-[20px] mr-3 mt-0.5">description</span>
+<textarea class="flex-1 bg-transparent border-none outline-none text-sm text-md-sys-color-on-surface placeholder:text-md-sys-color-outline/70 resize-none" placeholder="备注信息" rows="2"></textarea>
+</div>
+</div>
+</div>
+</div>
+<div class="slot-card bg-md-sys-color-surface rounded-2xl p-4 shadow-sm border border-md-sys-color-outline-variant/30 relative overflow-hidden">
+<div class="flex justify-between items-center mb-4 pb-2 border-b border-md-sys-color-outline-variant/20">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-md-sys-color-secondary-container flex items-center justify-center text-md-sys-color-on-secondary-container">
+<span class="text-sm font-bold">2</span>
+</div>
+<span class="text-md-sys-color-on-surface font-medium text-base">上课时间</span>
+</div>
+<button class="w-8 h-8 flex items-center justify-center rounded-full ripple text-md-sys-color-on-surface-variant hover:bg-md-sys-color-error-container hover:text-md-sys-color-on-error-container transition-colors">
+<span class="material-symbols-outlined font-light text-[20px]">delete</span>
+</button>
+</div>
+<div class="grid grid-cols-1 gap-4">
+<div class="flex gap-3">
+<button class="flex-1 h-12 rounded-xl border border-md-sys-color-outline/40 bg-transparent flex items-center justify-between px-4 ripple hover:bg-md-sys-color-surface-variant/30 active:bg-md-sys-color-secondary-container active:border-transparent transition-all">
+<span class="text-sm text-md-sys-color-on-surface">周三</span>
+<span class="material-symbols-outlined text-[18px] text-md-sys-color-outline">expand_more</span>
+</button>
+<button class="flex-1 h-12 rounded-xl border border-md-sys-color-outline/40 bg-transparent flex items-center justify-between px-4 ripple hover:bg-md-sys-color-surface-variant/30 active:bg-md-sys-color-secondary-container active:border-transparent transition-all">
+<span class="text-sm text-md-sys-color-on-surface">3-4节</span>
+<span class="material-symbols-outlined text-[18px] text-md-sys-color-outline">expand_more</span>
+</button>
+</div>
+<div class="space-y-3">
+<div class="relative flex items-center bg-md-sys-color-surface-container rounded-xl px-3 h-12 group focus-within:ring-1 focus-within:ring-md-sys-color-primary transition-all">
+<span class="material-symbols-outlined text-md-sys-color-primary/80 text-[20px] mr-3">person</span>
+<input class="flex-1 bg-transparent border-none outline-none text-sm text-md-sys-color-on-surface placeholder:text-md-sys-color-outline/70 h-full" placeholder="任课教师" type="text"/>
+</div>
+<div class="relative flex items-center bg-md-sys-color-surface-container rounded-xl px-3 h-12 group focus-within:ring-1 focus-within:ring-md-sys-color-primary transition-all">
+<span class="material-symbols-outlined text-md-sys-color-primary/80 text-[20px] mr-3">location_on</span>
+<input class="flex-1 bg-transparent border-none outline-none text-sm text-md-sys-color-on-surface placeholder:text-md-sys-color-outline/70 h-full" placeholder="上课教室" type="text"/>
+</div>
+<div class="relative flex items-center bg-md-sys-color-surface-container rounded-xl px-3 h-12 group focus-within:ring-1 focus-within:ring-md-sys-color-primary transition-all">
+<span class="material-symbols-outlined text-md-sys-color-primary/80 text-[20px] mr-3">date_range</span>
+<input class="flex-1 bg-transparent border-none outline-none text-sm text-md-sys-color-on-surface placeholder:text-md-sys-color-outline/70 h-full" placeholder="上课周数" type="text" value="1-16周"/>
+</div>
+<div class="relative flex items-start pt-3 bg-md-sys-color-surface-container rounded-xl px-3 group focus-within:ring-1 focus-within:ring-md-sys-color-primary transition-all">
+<span class="material-symbols-outlined text-md-sys-color-primary/80 text-[20px] mr-3 mt-0.5">description</span>
+<textarea class="flex-1 bg-transparent border-none outline-none text-sm text-md-sys-color-on-surface placeholder:text-md-sys-color-outline/70 resize-none" placeholder="备注信息" rows="2"></textarea>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<div class="absolute bottom-6 left-0 right-0 flex justify-center px-4 pointer-events-none z-30">
+<button class="pointer-events-auto shadow-fab bg-md-sys-color-primary-container text-md-sys-color-on-primary-container flex items-center justify-center gap-2 pl-4 pr-6 h-14 rounded-2xl hover:shadow-elevation-3 hover:bg-opacity-90 transition-all ripple active:scale-95">
+<span class="material-symbols-outlined text-[24px]">add</span>
+<span class="font-medium text-[16px]">添加时间段</span>
+</button>
+</div>
+</div>
+
+</body></html>

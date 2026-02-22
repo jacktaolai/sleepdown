@@ -5,12 +5,56 @@ import 'models/app_settings.dart';
 import 'models/course.dart';
 import 'models/time_schedule.dart';
 import 'repository/settings_repository.dart';
-import 'providers/settings_provider.dart';
+import 'repository/course_repository.dart';
+import 'providers/providers.dart';
 import 'theme/app_theme.dart';
 import 'ui/widgets/course_card.dart';
 import 'ui/widgets/schedule_grid.dart';
 import 'ui/widgets/week_calendar_strip.dart';
 import 'ui/widgets/week_schedule_view.dart';
+import 'ui/screens/home_screen.dart';
+import 'ui/screens/add_course_screen.dart';
+
+/// 用于预览的 Mock CourseRepository
+class MockCourseRepository implements CourseRepository {
+  final List<Course> _courses;
+
+  MockCourseRepository({List<Course>? courses}) : _courses = courses ?? [];
+
+  @override
+  Future<List<Course>> getAllCourses() async => _courses;
+
+  @override
+  Future<List<Course>> getCoursesByWeek(int week) async {
+    return _courses.where((course) => course.isActiveInWeek(week)).toList();
+  }
+
+  @override
+  Future<List<Course>> getCoursesByDay(int dayOfWeek) async {
+    return _courses.where((course) => course.dayOfWeek == dayOfWeek).toList();
+  }
+
+  @override
+  Future<Course?> getCourseById(String id) async {
+    try {
+      return _courses.firstWhere((course) => course.id == id);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  @override
+  Future<void> addCourse(Course course) async {}
+
+  @override
+  Future<void> updateCourse(Course course) async {}
+
+  @override
+  Future<void> deleteCourse(String id) async {}
+
+  @override
+  Future<void> close() async {}
+}
 
 /// 用于预览的 Mock SettingsRepository
 class MockSettingsRepository implements SettingsRepository {
@@ -335,6 +379,72 @@ class PreviewHomePage extends StatelessWidget {
                 ],
                 currentWeek: 1,
               ),
+            ),
+          ),
+          const SizedBox(height: 32),
+
+          // AddCourseScreen 预览
+          _buildSectionTitle('AddCourseScreen (添加课程)'),
+          _buildPreviewCard(
+            context,
+            '添加课程页面',
+            const SizedBox(
+              width: 360,
+              height: 700,
+              child: AddCourseScreen(),
+            ),
+          ),
+          const SizedBox(height: 32),
+
+          // HomeScreen 预览
+          _buildSectionTitle('HomeScreen (周课表)'),
+          _buildPreviewCard(
+            context,
+            '完整周课表页面',
+            ProviderScope(
+              overrides: [
+                settingsRepositoryProvider.overrideWithValue(
+                  MockSettingsRepository(
+                    settings: AppSettings(
+                      semesterStartDate: DateTime(2026, 2, 16),
+                      totalWeeks: 20,
+                    ),
+                  ),
+                ),
+                courseRepositoryProvider.overrideWithValue(
+                  MockCourseRepository(
+                    courses: [
+                      Course(
+                        id: '1',
+                        name: '数据结构',
+                        teacher: '张三',
+                        location: 'A301',
+                        dayOfWeek: 1,
+                        startSection: 1,
+                        endSection: 2,
+                        weekRanges: [WeekRange(start: 1, end: 16)],
+                        colorValue: 0,
+                        createdAt: DateTime.now(),
+                        updatedAt: DateTime.now(),
+                      ),
+                      Course(
+                        id: '2',
+                        name: '算法设计',
+                        teacher: '李四',
+                        location: 'B205',
+                        dayOfWeek: 2,
+                        startSection: 3,
+                        endSection: 4,
+                        weekRanges: [WeekRange(start: 1, end: 16)],
+                        colorValue: 1,
+                        createdAt: DateTime.now(),
+                        updatedAt: DateTime.now(),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+              child: const HomeScreen(),
             ),
           ),
         ],
