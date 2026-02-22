@@ -15,6 +15,7 @@ abstract class SettingsRepository {
   Future<void> addTimeSchedule(TimeSchedule schedule);
   Future<void> deleteTimeSchedule(String id);
   Future<void> setDefaultTimeSchedule(String id);
+  Future<void> close();
 }
 
 class SettingsRepositoryImpl implements SettingsRepository {
@@ -125,5 +126,10 @@ class SettingsRepositoryImpl implements SettingsRepository {
       where: 'id = ?',
       whereArgs: [id],
     );
+  }
+
+  @override
+  Future<void> close() async {
+    await _dbHelper.close();
   }
 }

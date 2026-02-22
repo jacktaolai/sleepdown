@@ -17,13 +17,21 @@ void main() {
   });
 
   Future<void> cleanDatabase() async {
-    final dbPath = await getDatabasesPath();
-    final dbFile = p.join(dbPath, 'sleepdown.db');
-    final file = File(dbFile);
-    if (await file.exists()) {
-      await file.delete();
+    try {
+      final dbPath = await getDatabasesPath();
+      final dbFile = p.join(dbPath, 'sleepdown.db');
+      final file = File(dbFile);
+      if (await file.exists()) {
+        await file.delete();
+      }
+    } catch (e) {
+      print('Warning: Could not clean database: $e');
     }
   }
+
+  tearDownAll(() async {
+    await cleanDatabase();
+  });
 
   group('SettingsRepository', () {
     late DatabaseHelper dbHelper;
@@ -31,12 +39,14 @@ void main() {
 
     setUp(() async {
       await cleanDatabase();
+      await Future.delayed(const Duration(milliseconds: 100));
       SharedPreferences.setMockInitialValues({});
       dbHelper = DatabaseHelper();
       repository = SettingsRepositoryImpl(dbHelper);
     });
 
     tearDown(() async {
+      await repository.close();
       await dbHelper.close();
     });
 

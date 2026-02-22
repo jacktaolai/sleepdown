@@ -5,7 +5,8 @@ import 'providers/providers.dart';
 import 'repository/course_repository.dart';
 import 'repository/settings_repository.dart';
 import 'theme/app_theme.dart';
-import 'ui/screens/home_screen.dart';
+import 'ui/screens/main_screen.dart';
+import 'utils/sample_data.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,6 +14,8 @@ void main() async {
   final dbHelper = DatabaseHelper();
   final courseRepository = CourseRepositoryImpl(dbHelper);
   final settingsRepository = SettingsRepositoryImpl(dbHelper);
+
+  await _initSampleData(courseRepository);
 
   runApp(
     ProviderScope(
@@ -25,6 +28,16 @@ void main() async {
   );
 }
 
+Future<void> _initSampleData(CourseRepository courseRepository) async {
+  final existingCourses = await courseRepository.getAllCourses();
+  if (existingCourses.isEmpty) {
+    final sampleCourses = SampleData.getSampleCourses();
+    for (final course in sampleCourses) {
+      await courseRepository.addCourse(course);
+    }
+  }
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -33,10 +46,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Sleepdown',
       theme: AppTheme.lightTheme,
-      home: const HomeScreen(),
+      home: const MainScreen(),
       routes: {
         '/course/edit': (context) => const Scaffold(body: Center(child: Text('Edit Course Screen Placeholder'))),
-        // Add other routes here
       },
       onGenerateRoute: (settings) {
         if (settings.name?.startsWith('/course/') ?? false) {

@@ -17,6 +17,7 @@ class SettingsNotifierMock extends SettingsNotifier {
   static SettingsRepository _createMockRepo() {
     final repo = MockSettingsRepository();
     when(() => repo.getSettings()).thenAnswer((_) async => const AppSettings());
+    when(() => repo.close()).thenAnswer((_) async {});
     return repo;
   }
 }

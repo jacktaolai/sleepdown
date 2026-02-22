@@ -34,13 +34,6 @@ class HomeScreen extends ConsumerWidget {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Navigate to add course
-          Navigator.of(context).pushNamed('/course/edit');
-        },
-        child: const Icon(Icons.add),
-      ),
     );
   }
 

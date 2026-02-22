@@ -9,6 +9,7 @@ abstract class CourseRepository {
   Future<void> addCourse(Course course);
   Future<void> updateCourse(Course course);
   Future<void> deleteCourse(String id);
+  Future<void> close();
 }
 
 class CourseRepositoryImpl implements CourseRepository {
@@ -78,5 +79,10 @@ class CourseRepositoryImpl implements CourseRepository {
       where: 'id = ?',
       whereArgs: [id],
     );
+  }
+
+  @override
+  Future<void> close() async {
+    await _dbHelper.close();
   }
 }
