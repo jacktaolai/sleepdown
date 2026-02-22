@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../theme/app_theme.dart';
 import 'home_screen.dart';
 import 'add_course_screen.dart';
 
@@ -22,6 +21,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       body: _screens[_currentIndex],
       bottomNavigationBar: NavigationBar(
@@ -31,8 +32,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
             _currentIndex = index;
           });
         },
-        backgroundColor: AppTheme.surface,
-        indicatorColor: AppTheme.secondaryContainer,
+        backgroundColor: colorScheme.surface,
+        indicatorColor: colorScheme.secondaryContainer,
         destinations: const [
           NavigationDestination(
             icon: Icon(Icons.table_chart_outlined),
@@ -60,12 +61,19 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
+      backgroundColor: colorScheme.surfaceContainerLow,
       appBar: AppBar(
+        backgroundColor: colorScheme.surface,
         title: const Text('设置'),
       ),
-      body: const Center(
-        child: Text('设置页面'),
+      body: Center(
+        child: Text(
+          '设置页面',
+          style: TextStyle(color: colorScheme.onSurface),
+        ),
       ),
     );
   }

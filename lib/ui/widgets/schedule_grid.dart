@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/widget_previews.dart';
 import '../../models/course.dart';
-import '../../theme/app_theme.dart';
 import 'course_card.dart';
 
 class ScheduleGrid extends ConsumerWidget {
@@ -15,7 +14,7 @@ class ScheduleGrid extends ConsumerWidget {
     super.key,
     required this.courses,
     required this.currentWeek,
-    this.columnWidth = 0, // 默认值会被忽略，需要外部传入
+    this.columnWidth = 0,
     this.timeColumnWidth = 48.0,
   });
 
@@ -25,7 +24,7 @@ class ScheduleGrid extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // 使用传入的 columnWidth，或计算默认值
+    final colorScheme = Theme.of(context).colorScheme;
     final effectiveTimeColumnWidth = timeColumnWidth != 0 ? timeColumnWidth : defaultTimeColumnWidth;
     final effectiveColumnWidth = columnWidth != 0
         ? columnWidth
@@ -45,14 +44,14 @@ class ScheduleGrid extends ConsumerWidget {
                 return Container(
                   height: sectionHeight,
                   alignment: Alignment.center,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     border: Border(
                       bottom: BorderSide(
-                        color: Color(0x1AC3C7CF), // outlineVariant with low opacity
+                        color: colorScheme.outlineVariant.withValues(alpha: 0.1),
                         width: 1,
                       ),
                       right: BorderSide(
-                        color: Color(0x1AC3C7CF),
+                        color: colorScheme.outlineVariant.withValues(alpha: 0.1),
                         width: 1,
                       ),
                     ),
@@ -65,7 +64,7 @@ class ScheduleGrid extends ConsumerWidget {
                         Text(
                           '$section',
                           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: AppTheme.onSurface,
+                            color: colorScheme.onSurface,
                             fontWeight: FontWeight.w500,
                             fontSize: 14,
                           ),
@@ -73,7 +72,7 @@ class ScheduleGrid extends ConsumerWidget {
                         Text(
                           _getTimeForSection(section),
                           style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: AppTheme.onSurfaceVariant,
+                            color: colorScheme.onSurfaceVariant,
                             fontSize: 8,
                             height: 1.1,
                           ),

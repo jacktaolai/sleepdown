@@ -18,7 +18,8 @@ class CourseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = _getCardColorScheme(course.colorValue);
+    final colorScheme = theme.colorScheme;
+    final cardColors = AppTheme.getCourseCardColorScheme(course.colorValue);
 
     return GestureDetector(
       onTap: onTap,
@@ -26,7 +27,7 @@ class CourseCard extends StatelessWidget {
         margin: const EdgeInsets.all(1.5),
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: isCurrentWeek ? colorScheme.container : AppTheme.surfaceVariant,
+          color: isCurrentWeek ? cardColors.container : colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(8),
           boxShadow: [
             BoxShadow(
@@ -45,7 +46,7 @@ class CourseCard extends StatelessWidget {
                 child: Text(
                   '[非本周]',
                   style: theme.textTheme.labelSmall?.copyWith(
-                    color: AppTheme.onSurfaceVariant.withValues(alpha: 0.7),
+                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
                     fontWeight: FontWeight.bold,
                     fontSize: 10,
                   ),
@@ -54,7 +55,7 @@ class CourseCard extends StatelessWidget {
             Text(
               course.name,
               style: theme.textTheme.labelSmall?.copyWith(
-                color: isCurrentWeek ? colorScheme.onContainer : AppTheme.onSurfaceVariant,
+                color: isCurrentWeek ? cardColors.onContainer : colorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.bold,
                 fontSize: 11,
                 height: 1.3,
@@ -68,14 +69,14 @@ class CourseCard extends StatelessWidget {
                 context,
                 Icons.location_on_outlined,
                 '@${course.location}',
-                isCurrentWeek ? colorScheme.onContainer : AppTheme.onSurfaceVariant,
+                isCurrentWeek ? cardColors.onContainer : colorScheme.onSurfaceVariant,
               ),
             if (course.teacher.isNotEmpty)
               _buildInfoRow(
                 context,
                 Icons.person_outline,
                 course.teacher,
-                isCurrentWeek ? colorScheme.onContainer : AppTheme.onSurfaceVariant,
+                isCurrentWeek ? cardColors.onContainer : colorScheme.onSurfaceVariant,
               ),
           ],
         ),
@@ -88,8 +89,6 @@ class CourseCard extends StatelessWidget {
       padding: const EdgeInsets.only(top: 2),
       child: Row(
         children: [
-          // Icon(icon, size: 10, color: color.withOpacity(0.8)),
-          // const SizedBox(width: 2),
           Expanded(
             child: Text(
               text,
@@ -106,21 +105,6 @@ class CourseCard extends StatelessWidget {
       ),
     );
   }
-
-  ({Color container, Color onContainer}) _getCardColorScheme(int colorValue) {
-    // Map colorValue to theme colors
-    // This is a simple mapping, you can expand this logic
-    // For now, we cycle through the defined card colors based on the value
-    const colors = [
-      (container: AppTheme.cardBlueContainer, onContainer: AppTheme.cardBlueOnContainer),
-      (container: AppTheme.cardPinkContainer, onContainer: AppTheme.cardPinkOnContainer),
-      (container: AppTheme.cardPurpleContainer, onContainer: AppTheme.cardPurpleOnContainer),
-      (container: AppTheme.cardGreenContainer, onContainer: AppTheme.cardGreenOnContainer),
-      (container: AppTheme.cardIndigoContainer, onContainer: AppTheme.cardIndigoOnContainer),
-    ];
-
-    return colors[colorValue % colors.length];
-  }
 }
 
 // ============== Widget Preview Annotations ==============
@@ -133,7 +117,7 @@ class CourseCard extends StatelessWidget {
 )
 Widget courseCardPreview() {
   return MaterialApp(
-    theme: ThemeData.light(useMaterial3: true),
+    theme: AppTheme.lightTheme,
     home: Scaffold(
       body: SizedBox(
         width: 100,
@@ -167,7 +151,7 @@ Widget courseCardPreview() {
 )
 Widget courseCardNotCurrentWeekPreview() {
   return MaterialApp(
-    theme: ThemeData.light(useMaterial3: true),
+    theme: AppTheme.lightTheme,
     home: Scaffold(
       body: SizedBox(
         width: 100,
@@ -201,7 +185,7 @@ Widget courseCardNotCurrentWeekPreview() {
 )
 Widget courseCardMultiColorPreview() {
   return MaterialApp(
-    theme: ThemeData.light(useMaterial3: true),
+    theme: AppTheme.lightTheme,
     home: Scaffold(
       body: Row(
         children: List.generate(5, (index) {

@@ -5,7 +5,6 @@ import '../../models/app_settings.dart';
 import '../../models/time_schedule.dart';
 import '../../repository/settings_repository.dart';
 import '../../providers/providers.dart';
-import '../../theme/app_theme.dart';
 
 class WeekCalendarStrip extends ConsumerWidget {
   final double columnWidth;
@@ -43,7 +42,7 @@ class WeekCalendarStrip extends ConsumerWidget {
       margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: AppTheme.surfaceVariant.withValues(alpha: 0.3),
+        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -61,10 +60,10 @@ class WeekCalendarStrip extends ConsumerWidget {
             child: Container(
               height: 56,
               alignment: Alignment.center,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 border: Border(
                   right: BorderSide(
-                    color: Color(0x33C3C7CF),
+                    color: colorScheme.outlineVariant.withValues(alpha: 0.3),
                     width: 1,
                   ),
                 ),
@@ -75,7 +74,7 @@ class WeekCalendarStrip extends ConsumerWidget {
                   Text(
                     '$month',
                     style: theme.textTheme.labelMedium?.copyWith(
-                      color: AppTheme.onSurfaceVariant,
+                      color: colorScheme.onSurfaceVariant,
                       fontWeight: FontWeight.w500,
                       fontSize: 16,
                     ),
@@ -83,7 +82,7 @@ class WeekCalendarStrip extends ConsumerWidget {
                   Text(
                     '月',
                     style: theme.textTheme.labelMedium?.copyWith(
-                      color: AppTheme.onSurfaceVariant,
+                      color: colorScheme.onSurfaceVariant,
                       fontSize: 12,
                     ),
                   ),
@@ -101,10 +100,10 @@ class WeekCalendarStrip extends ConsumerWidget {
               width: effectiveColumnWidth,
               height: 56,
               alignment: Alignment.center,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 border: Border(
                   right: BorderSide(
-                    color: Color(0x1AC3C7CF),
+                    color: colorScheme.outlineVariant.withValues(alpha: 0.1),
                     width: 1,
                   ),
                 ),
@@ -115,7 +114,7 @@ class WeekCalendarStrip extends ConsumerWidget {
                   Text(
                     dayName,
                     style: theme.textTheme.labelSmall?.copyWith(
-                      color: AppTheme.onSurfaceVariant,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(height: 4),

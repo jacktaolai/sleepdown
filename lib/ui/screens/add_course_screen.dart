@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widget_previews.dart';
-import '../../theme/app_theme.dart';
 
 class AddCourseScreen extends StatefulWidget {
   const AddCourseScreen({super.key});
@@ -16,7 +15,8 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
   int _selectedColorIndex = 0;
   final List<_TimeSlot> _timeSlots = [_TimeSlot()];
 
-  // 预定义颜色 (与设计一致)
+  // 预定义颜色 (使用 MD3 颜色系统)
+  // 这些颜色会在 light/dark 模式下自动适配
   static const List<Color> _colors = [
     Color(0xFFFFD8E4), // 粉色
     Color(0xFFD1E4FF), // 蓝色
@@ -36,7 +36,6 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
     setState(() {
       _timeSlots.add(_TimeSlot());
     });
-    // 延迟滚动到底部，等待UI构建完成
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollController.animateTo(
         _scrollController.position.maxScrollExtent,
@@ -57,7 +56,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
   void _showWeekDayPicker(_TimeSlot slot) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppTheme.surface,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -79,7 +78,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
   void _showSectionPicker(_TimeSlot slot) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppTheme.surface,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -104,6 +103,9 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
     required int selectedIndex,
     required ValueChanged<int> onSelected,
   }) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final outlineVariant = colorScheme.outlineVariant;
+
     return SizedBox(
       height: 300,
       child: Column(
@@ -132,8 +134,8 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
               selectionOverlay: Container(
                 decoration: BoxDecoration(
                   border: Border(
-                    top: BorderSide(color: AppTheme.outlineVariant.withValues(alpha: 0.3)),
-                    bottom: BorderSide(color: AppTheme.outlineVariant.withValues(alpha: 0.3)),
+                    top: BorderSide(color: outlineVariant.withValues(alpha: 0.3)),
+                    bottom: BorderSide(color: outlineVariant.withValues(alpha: 0.3)),
                   ),
                 ),
               ),
@@ -165,18 +167,17 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      backgroundColor: AppTheme.surfaceContainerLow,
+      backgroundColor: colorScheme.surfaceContainerLow,
       appBar: AppBar(
-        backgroundColor: AppTheme.surface,
+        backgroundColor: colorScheme.surface,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            // 返回导航栏
-          },
+          onPressed: () {},
         ),
         title: Text(
           '添加课程',
@@ -186,9 +187,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
           Padding(
             padding: const EdgeInsets.only(right: 8),
             child: FilledButton.icon(
-              onPressed: () {
-                // 保存课程
-              },
+              onPressed: () {},
               icon: const Icon(Icons.check, size: 20),
               label: const Text('保存'),
               style: FilledButton.styleFrom(
@@ -207,7 +206,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildCourseInfoCard(theme),
+            _buildCourseInfoCard(theme, colorScheme),
             const SizedBox(height: 24),
             Text(
               '时间段',
@@ -219,7 +218,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
             ..._timeSlots.asMap().entries.map((entry) {
               final index = entry.key;
               final slot = entry.value;
-              return _buildTimeSlotCard(theme, slot, index);
+              return _buildTimeSlotCard(theme, colorScheme, slot, index);
             }),
             const SizedBox(height: 80),
           ],
@@ -227,8 +226,8 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _addTimeSlot,
-        backgroundColor: AppTheme.primaryContainer,
-        foregroundColor: AppTheme.onPrimaryContainer,
+        backgroundColor: colorScheme.primaryContainer,
+        foregroundColor: colorScheme.onPrimaryContainer,
         elevation: 4,
         icon: const Icon(Icons.add),
         label: const Text('添加时间段'),
@@ -236,13 +235,13 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
     );
   }
 
-  Widget _buildCourseInfoCard(ThemeData theme) {
+  Widget _buildCourseInfoCard(ThemeData theme, ColorScheme colorScheme) {
     return Card(
       elevation: 0,
-      color: AppTheme.surface,
+      color: colorScheme.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: AppTheme.outlineVariant.withValues(alpha: 0.3)),
+        side: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.3)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -253,12 +252,13 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
               controller: _courseNameController,
               label: '课程名称',
               icon: Icons.school_outlined,
+              colorScheme: colorScheme,
             ),
             const SizedBox(height: 20),
             Text(
               '课程颜色',
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: AppTheme.onSurfaceVariant,
+                color: colorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -286,7 +286,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
                         color: color,
                         shape: BoxShape.circle,
                         border: isSelected
-                            ? Border.all(color: AppTheme.primary, width: 3)
+                            ? Border.all(color: colorScheme.primary, width: 3)
                             : null,
                         boxShadow: isSelected
                             ? [
@@ -321,21 +321,21 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
                     height: 40,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      gradient: const LinearGradient(
+                      gradient: LinearGradient(
                         colors: [
-                          Color(0xFFFFCDD2),
-                          Color(0xFFC8E6C9),
-                          Color(0xFFBBDEFB),
+                          colorScheme.error.withValues(alpha: 0.3),
+                          colorScheme.tertiary.withValues(alpha: 0.3),
+                          colorScheme.primary.withValues(alpha: 0.3),
                         ],
                       ),
                       border: Border.all(
-                        color: AppTheme.outline.withValues(alpha: 0.2),
+                        color: colorScheme.outline.withValues(alpha: 0.2),
                       ),
                     ),
                     child: Icon(
                       Icons.colorize,
                       size: 18,
-                      color: AppTheme.onSurfaceVariant,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ),
@@ -349,24 +349,25 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
 
   Color _getCheckIconColor(Color backgroundColor) {
     final luminance = backgroundColor.computeLuminance();
-    return luminance > 0.5 ? AppTheme.onSurface : Colors.white;
+    return luminance > 0.5 ? Colors.black87 : Colors.white;
   }
 
   Widget _buildIconTextField({
     required TextEditingController controller,
     required String label,
     required IconData icon,
+    required ColorScheme colorScheme,
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.surfaceContainerLow,
+        color: colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(12),
       ),
       child: TextField(
         controller: controller,
         decoration: InputDecoration(
           labelText: label,
-          prefixIcon: Icon(icon, color: AppTheme.primary.withValues(alpha: 0.8)),
+          prefixIcon: Icon(icon, color: colorScheme.primary.withValues(alpha: 0.8)),
           filled: true,
           fillColor: Colors.transparent,
           border: OutlineInputBorder(
@@ -379,23 +380,23 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: AppTheme.primary, width: 2),
+            borderSide: BorderSide(color: colorScheme.primary, width: 2),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildTimeSlotCard(ThemeData theme, _TimeSlot slot, int index) {
-    final colorScheme = _getSlotColorScheme(index);
+  Widget _buildTimeSlotCard(ThemeData theme, ColorScheme colorScheme, _TimeSlot slot, int index) {
+    final slotColors = _getSlotColors(colorScheme, index);
 
     return Card(
       elevation: 0,
       margin: const EdgeInsets.only(bottom: 16),
-      color: AppTheme.surface,
+      color: colorScheme.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: AppTheme.outlineVariant.withValues(alpha: 0.3)),
+        side: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.3)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -407,7 +408,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                    color: AppTheme.outlineVariant.withValues(alpha: 0.2),
+                    color: colorScheme.outlineVariant.withValues(alpha: 0.2),
                   ),
                 ),
               ),
@@ -417,14 +418,14 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
                     width: 32,
                     height: 32,
                     decoration: BoxDecoration(
-                      color: colorScheme.container,
+                      color: slotColors.container,
                       shape: BoxShape.circle,
                     ),
                     child: Center(
                       child: Text(
                         '${index + 1}',
                         style: theme.textTheme.labelMedium?.copyWith(
-                          color: colorScheme.onContainer,
+                          color: slotColors.onContainer,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -442,18 +443,16 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
                     IconButton(
                       onPressed: () => _removeTimeSlot(index),
                       icon: const Icon(Icons.delete_outline),
-                      color: AppTheme.onSurfaceVariant,
+                      color: colorScheme.onSurfaceVariant,
                       style: IconButton.styleFrom(
-                        hoverColor: const Color(0xFFFFDAD6),
-                        foregroundColor: const Color(0xFFBA1A1A),
+                        hoverColor: colorScheme.errorContainer,
+                        foregroundColor: colorScheme.error,
                       ),
                     ),
                 ],
               ),
             ),
             const SizedBox(height: 16),
-
-            // 星期和节次选择 - 使用按钮样式
             Row(
               children: [
                 Expanded(
@@ -461,6 +460,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
                     context,
                     _weekDays[slot.selectedDayIndex],
                     () => _showWeekDayPicker(slot),
+                    colorScheme,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -469,37 +469,38 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
                     context,
                     _sections[slot.startSection],
                     () => _showSectionPicker(slot),
+                    colorScheme,
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 16),
-
             _buildIconInput(
               controller: slot.teacherController,
               label: '任课教师',
               icon: Icons.person_outline,
+              colorScheme: colorScheme,
             ),
             const SizedBox(height: 12),
-
             _buildIconInput(
               controller: slot.locationController,
               label: '上课教室',
               icon: Icons.location_on_outlined,
+              colorScheme: colorScheme,
             ),
             const SizedBox(height: 12),
-
             _buildIconInput(
               controller: slot.weeksController,
               label: '上课周数',
               icon: Icons.date_range_outlined,
+              colorScheme: colorScheme,
             ),
             const SizedBox(height: 12),
-
             _buildIconInput(
               controller: slot.remarkController,
               label: '备注信息',
               icon: Icons.description_outlined,
+              colorScheme: colorScheme,
               maxLines: 2,
             ),
           ],
@@ -508,9 +509,18 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
     );
   }
 
-  Widget _buildPickerButton(BuildContext context, String value, VoidCallback onTap) {
+  ({Color container, Color onContainer}) _getSlotColors(ColorScheme colorScheme, int index) {
+    final colors = [
+      (container: colorScheme.primaryContainer, onContainer: colorScheme.onPrimaryContainer),
+      (container: colorScheme.secondaryContainer, onContainer: colorScheme.onSecondaryContainer),
+      (container: colorScheme.tertiaryContainer, onContainer: colorScheme.onTertiaryContainer),
+    ];
+    return colors[index % colors.length];
+  }
+
+  Widget _buildPickerButton(BuildContext context, String value, VoidCallback onTap, ColorScheme colorScheme) {
     return Material(
-      color: AppTheme.surfaceContainerLow,
+      color: colorScheme.surfaceContainerHighest,
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
         onTap: onTap,
@@ -524,12 +534,12 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
               Text(
                 value,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: AppTheme.onSurface,
+                      color: colorScheme.onSurface,
                     ),
               ),
               Icon(
                 Icons.keyboard_arrow_down,
-                color: AppTheme.onSurfaceVariant,
+                color: colorScheme.onSurfaceVariant,
               ),
             ],
           ),
@@ -538,24 +548,16 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
     );
   }
 
-  ({Color container, Color onContainer}) _getSlotColorScheme(int index) {
-    final colors = [
-      (container: AppTheme.primaryContainer, onContainer: AppTheme.onPrimaryContainer),
-      (container: AppTheme.secondaryContainer, onContainer: AppTheme.onSecondaryContainer),
-      (container: AppTheme.tertiaryContainer, onContainer: AppTheme.onTertiaryContainer),
-    ];
-    return colors[index % colors.length];
-  }
-
   Widget _buildIconInput({
     required TextEditingController controller,
     required String label,
     required IconData icon,
+    required ColorScheme colorScheme,
     int maxLines = 1,
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.surfaceContainerLow,
+        color: colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(12),
       ),
       child: TextField(
@@ -563,7 +565,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
         maxLines: maxLines,
         decoration: InputDecoration(
           labelText: label,
-          prefixIcon: Icon(icon, color: AppTheme.primary.withValues(alpha: 0.8)),
+          prefixIcon: Icon(icon, color: colorScheme.primary.withValues(alpha: 0.8)),
           filled: true,
           fillColor: Colors.transparent,
           border: OutlineInputBorder(
@@ -576,7 +578,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: AppTheme.primary, width: 1),
+            borderSide: BorderSide(color: colorScheme.primary, width: 1),
           ),
           contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: maxLines > 1 ? 12 : 0),
         ),
@@ -603,7 +605,7 @@ class _TimeSlot {
 
 // ============== Widget Preview Annotations ==============
 
-/// 预览: AddCourseScreen - 添加课程页面
+/// 预览: AddCourseScreen - 添加课程页面 (亮色模式)
 @Preview(
   name: 'AddCourseScreen - 添加课程',
   group: 'AddCourseScreen',

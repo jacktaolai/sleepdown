@@ -7,7 +7,6 @@ import '../../models/time_schedule.dart';
 import '../../repository/settings_repository.dart';
 import '../../repository/course_repository.dart';
 import '../../providers/providers.dart';
-import '../../theme/app_theme.dart';
 import '../widgets/schedule_grid.dart';
 import '../widgets/week_calendar_strip.dart';
 
@@ -18,22 +17,23 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final currentWeek = ref.watch(currentWeekProvider);
     final courses = ref.watch(courseListProvider);
 
     return Scaffold(
-      backgroundColor: AppTheme.surfaceContainerLow,
+      backgroundColor: colorScheme.surfaceContainerLow,
       body: SafeArea(
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 16),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              // 计算列宽：与底部课程网格一致
               final columnWidth = (constraints.maxWidth - timeColumnWidth) / 7;
 
               return Column(
                 children: [
-                  _buildHeader(context, ref, currentWeek),
+                  _buildHeader(context, ref, currentWeek, colorScheme),
                   WeekCalendarStrip(
                     columnWidth: columnWidth,
                     timeColumnWidth: timeColumnWidth,
@@ -55,12 +55,11 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context, WidgetRef ref, int currentWeek) {
+  Widget _buildHeader(BuildContext context, WidgetRef ref, int currentWeek, ColorScheme colorScheme) {
     final theme = Theme.of(context);
     final now = DateTime.now();
     final dateStr = '${now.year}/${now.month}/${now.day}';
-    
-    // Check if semester ended (mock logic or from settings)
+
     final totalWeeks = ref.watch(settingsProvider).totalWeeks;
     final isSemesterEnded = currentWeek > totalWeeks;
     final weekStatus = isSemesterEnded ? '学期已结束' : '进行中';
@@ -77,7 +76,7 @@ class HomeScreen extends ConsumerWidget {
                 dateStr,
                 style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: AppTheme.onSurface,
+                  color: colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 2),
@@ -86,7 +85,7 @@ class HomeScreen extends ConsumerWidget {
                   Text(
                     '第$currentWeek周',
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: AppTheme.onSurfaceVariant,
+                      color: colorScheme.onSurfaceVariant,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -94,7 +93,7 @@ class HomeScreen extends ConsumerWidget {
                   Text(
                     '· $weekStatus',
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: AppTheme.outline,
+                      color: colorScheme.outline,
                     ),
                   ),
                 ],
@@ -106,12 +105,8 @@ class HomeScreen extends ConsumerWidget {
               _buildIconButton(context, Icons.calendar_month_outlined, () {
                 _showWeekPicker(context, ref, currentWeek);
               }),
-              _buildIconButton(context, Icons.download_outlined, () {
-                // Download schedule
-              }),
-              _buildIconButton(context, Icons.share_outlined, () {
-                // Share schedule
-              }),
+              _buildIconButton(context, Icons.download_outlined, () {}),
+              _buildIconButton(context, Icons.share_outlined, () {}),
             ],
           ),
         ],
@@ -120,23 +115,25 @@ class HomeScreen extends ConsumerWidget {
   }
 
   Widget _buildIconButton(BuildContext context, IconData icon, VoidCallback onPressed) {
+    final colorScheme = Theme.of(context).colorScheme;
     return IconButton(
       onPressed: onPressed,
       icon: Icon(icon),
-      color: AppTheme.onSurfaceVariant,
+      color: colorScheme.onSurfaceVariant,
       style: IconButton.styleFrom(
-        hoverColor: AppTheme.onSurfaceVariant.withValues(alpha: 0.08),
-        highlightColor: AppTheme.onSurfaceVariant.withValues(alpha: 0.12),
+        hoverColor: colorScheme.onSurfaceVariant.withValues(alpha: 0.08),
+        highlightColor: colorScheme.onSurfaceVariant.withValues(alpha: 0.12),
       ),
     );
   }
 
   void _showWeekPicker(BuildContext context, WidgetRef ref, int currentWeek) {
     final totalWeeks = ref.read(settingsProvider).totalWeeks;
+    final colorScheme = Theme.of(context).colorScheme;
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppTheme.surface,
+      backgroundColor: colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -183,6 +180,7 @@ class _WeekPickerSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final actualCurrentWeek = _calculateActualCurrentWeek();
 
     return Container(
@@ -191,7 +189,6 @@ class _WeekPickerSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 标题和关闭按钮
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -208,8 +205,6 @@ class _WeekPickerSheet extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-
-          // 周数网格 (4列)
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -222,19 +217,17 @@ class _WeekPickerSheet extends StatelessWidget {
             itemCount: totalWeeks,
             itemBuilder: (context, index) {
               final week = index + 1;
-              return _buildWeekItem(context, week, actualCurrentWeek);
+              return _buildWeekItem(context, week, actualCurrentWeek, colorScheme);
             },
           ),
           const SizedBox(height: 20),
-
-          // 回到本周按钮
           SizedBox(
             width: double.infinity,
             child: OutlinedButton(
               onPressed: onGoToCurrentWeek,
               style: OutlinedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 12),
-                side: BorderSide(color: AppTheme.primary),
+                side: BorderSide(color: colorScheme.primary),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -248,7 +241,7 @@ class _WeekPickerSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildWeekItem(BuildContext context, int week, int actualCurrentWeek) {
+  Widget _buildWeekItem(BuildContext context, int week, int actualCurrentWeek, ColorScheme colorScheme) {
     final theme = Theme.of(context);
     final isSelected = week == currentWeek;
     final isCurrentWeek = week == actualCurrentWeek;
@@ -259,22 +252,21 @@ class _WeekPickerSheet extends StatelessWidget {
     Color borderColor;
 
     if (isSelected) {
-      backgroundColor = AppTheme.primary;
-      textColor = AppTheme.onPrimary;
-      borderColor = AppTheme.primary;
+      backgroundColor = colorScheme.primary;
+      textColor = colorScheme.onPrimary;
+      borderColor = colorScheme.primary;
     } else if (isPast) {
-      backgroundColor = AppTheme.surfaceContainerLow;
-      textColor = AppTheme.onSurfaceVariant;
-      borderColor = AppTheme.outlineVariant;
+      backgroundColor = colorScheme.surfaceContainerLow;
+      textColor = colorScheme.onSurfaceVariant;
+      borderColor = colorScheme.outlineVariant;
     } else if (isCurrentWeek) {
-      backgroundColor = AppTheme.secondaryContainer;
-      textColor = AppTheme.onSecondaryContainer;
-      borderColor = AppTheme.secondary;
+      backgroundColor = colorScheme.secondaryContainer;
+      textColor = colorScheme.onSecondaryContainer;
+      borderColor = colorScheme.secondary;
     } else {
-      // isFuture
-      backgroundColor = AppTheme.surface;
-      textColor = AppTheme.onSurface;
-      borderColor = AppTheme.outlineVariant;
+      backgroundColor = colorScheme.surface;
+      textColor = colorScheme.onSurface;
+      borderColor = colorScheme.outlineVariant;
     }
 
     return GestureDetector(
@@ -303,8 +295,8 @@ class _WeekPickerSheet extends StatelessWidget {
                 child: Container(
                   width: 6,
                   height: 6,
-                  decoration: const BoxDecoration(
-                    color: AppTheme.tertiary,
+                  decoration: BoxDecoration(
+                    color: colorScheme.tertiary,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -316,7 +308,6 @@ class _WeekPickerSheet extends StatelessWidget {
   }
 
   int _calculateActualCurrentWeek() {
-    // 简化计算，实际应该根据设置中的学期开始日期计算
     final now = DateTime.now();
     final semesterStart = DateTime(2026, 2, 16);
     final difference = now.difference(semesterStart).inDays;
@@ -412,83 +403,87 @@ class MockCourseRepository implements CourseRepository {
   size: Size(390, 844),
 )
 Widget homeScreenPreview() {
-  final courses = [
-    Course(
-      id: '1',
-      name: '数据结构',
-      teacher: '张三',
-      location: 'A301',
-      dayOfWeek: 1,
-      startSection: 1,
-      endSection: 2,
-      weekRanges: [WeekRange(start: 1, end: 16)],
-      colorValue: 0,
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-    ),
-    Course(
-      id: '2',
-      name: '算法设计',
-      teacher: '李四',
-      location: 'B205',
-      dayOfWeek: 2,
-      startSection: 3,
-      endSection: 4,
-      weekRanges: [WeekRange(start: 1, end: 16)],
-      colorValue: 1,
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-    ),
-    Course(
-      id: '3',
-      name: '操作系统',
-      teacher: '王五',
-      location: 'C402',
-      dayOfWeek: 3,
-      startSection: 5,
-      endSection: 6,
-      weekRanges: [WeekRange(start: 1, end: 16)],
-      colorValue: 2,
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-    ),
-    Course(
-      id: '4',
-      name: '计算机网络',
-      teacher: '赵六',
-      location: 'D101',
-      dayOfWeek: 5,
-      startSection: 7,
-      endSection: 8,
-      weekRanges: [WeekRange(start: 1, end: 16)],
-      colorValue: 3,
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-    ),
-    Course(
-      id: '5',
-      name: '体育',
-      teacher: '钱老师',
-      location: '操场',
-      dayOfWeek: 4,
-      startSection: 9,
-      endSection: 10,
-      weekRanges: [WeekRange(start: 1, end: 16)],
-      colorValue: 4,
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-    ),
-  ];
-
-  final settings = AppSettings(
-    semesterStartDate: DateTime(2026, 2, 16),
-    totalWeeks: 20,
-  );
-
   return ProviderScope(
     overrides: [
-      settingsRepositoryProvider.overrideWithValue(MockSettingsRepository(settings: settings)),
-      courseRepositoryProvider.overrideWithValue(MockCourseRepository(courses: courses)),
+      settingsRepositoryProvider.overrideWithValue(
+        MockSettingsRepository(
+          settings: AppSettings(
+            semesterStartDate: DateTime(2026, 2, 16),
+            totalWeeks: 20,
+          ),
+        ),
+      ),
+      courseRepositoryProvider.overrideWithValue(
+        MockCourseRepository(
+          courses: [
+            Course(
+              id: '1',
+              name: '数据结构',
+              teacher: '张三',
+              location: 'A301',
+              dayOfWeek: 1,
+              startSection: 1,
+              endSection: 2,
+              weekRanges: [WeekRange(start: 1, end: 16)],
+              colorValue: 0,
+              createdAt: DateTime.now(),
+              updatedAt: DateTime.now(),
+            ),
+            Course(
+              id: '2',
+              name: '算法设计',
+              teacher: '李四',
+              location: 'B205',
+              dayOfWeek: 2,
+              startSection: 3,
+              endSection: 4,
+              weekRanges: [WeekRange(start: 1, end: 16)],
+              colorValue: 1,
+              createdAt: DateTime.now(),
+              updatedAt: DateTime.now(),
+            ),
+            Course(
+              id: '3',
+              name: '操作系统',
+              teacher: '王五',
+              location: 'C402',
+              dayOfWeek: 3,
+              startSection: 5,
+              endSection: 6,
+              weekRanges: [WeekRange(start: 1, end: 16)],
+              colorValue: 2,
+              createdAt: DateTime.now(),
+              updatedAt: DateTime.now(),
+            ),
+            Course(
+              id: '4',
+              name: '计算机网络',
+              teacher: '赵六',
+              location: 'D101',
+              dayOfWeek: 5,
+              startSection: 7,
+              endSection: 8,
+              weekRanges: [WeekRange(start: 1, end: 16)],
+              colorValue: 3,
+              createdAt: DateTime.now(),
+              updatedAt: DateTime.now(),
+            ),
+            Course(
+              id: '5',
+              name: '体育',
+              teacher: '钱老师',
+              location: '操场',
+              dayOfWeek: 4,
+              startSection: 9,
+              endSection: 10,
+              weekRanges: [WeekRange(start: 1, end: 16)],
+              colorValue: 4,
+              createdAt: DateTime.now(),
+              updatedAt: DateTime.now(),
+            ),
+          ],
+        ),
+      ),
     ],
     child: MaterialApp(
       theme: ThemeData.light(useMaterial3: true),
@@ -505,44 +500,48 @@ Widget homeScreenPreview() {
   brightness: Brightness.dark,
 )
 Widget homeScreenDarkPreview() {
-  final courses = [
-    Course(
-      id: '1',
-      name: '数据结构',
-      teacher: '张三',
-      location: 'A301',
-      dayOfWeek: 1,
-      startSection: 1,
-      endSection: 2,
-      weekRanges: [WeekRange(start: 1, end: 16)],
-      colorValue: 0,
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-    ),
-    Course(
-      id: '2',
-      name: '算法设计',
-      teacher: '李四',
-      location: 'B205',
-      dayOfWeek: 2,
-      startSection: 3,
-      endSection: 4,
-      weekRanges: [WeekRange(start: 1, end: 16)],
-      colorValue: 1,
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-    ),
-  ];
-
-  final settings = AppSettings(
-    semesterStartDate: DateTime(2026, 2, 16),
-    totalWeeks: 20,
-  );
-
   return ProviderScope(
     overrides: [
-      settingsRepositoryProvider.overrideWithValue(MockSettingsRepository(settings: settings)),
-      courseRepositoryProvider.overrideWithValue(MockCourseRepository(courses: courses)),
+      settingsRepositoryProvider.overrideWithValue(
+        MockSettingsRepository(
+          settings: AppSettings(
+            semesterStartDate: DateTime(2026, 2, 16),
+            totalWeeks: 20,
+          ),
+        ),
+      ),
+      courseRepositoryProvider.overrideWithValue(
+        MockCourseRepository(
+          courses: [
+            Course(
+              id: '1',
+              name: '数据结构',
+              teacher: '张三',
+              location: 'A301',
+              dayOfWeek: 1,
+              startSection: 1,
+              endSection: 2,
+              weekRanges: [WeekRange(start: 1, end: 16)],
+              colorValue: 0,
+              createdAt: DateTime.now(),
+              updatedAt: DateTime.now(),
+            ),
+            Course(
+              id: '2',
+              name: '算法设计',
+              teacher: '李四',
+              location: 'B205',
+              dayOfWeek: 2,
+              startSection: 3,
+              endSection: 4,
+              weekRanges: [WeekRange(start: 1, end: 16)],
+              colorValue: 1,
+              createdAt: DateTime.now(),
+              updatedAt: DateTime.now(),
+            ),
+          ],
+        ),
+      ),
     ],
     child: MaterialApp(
       theme: ThemeData.dark(useMaterial3: true),

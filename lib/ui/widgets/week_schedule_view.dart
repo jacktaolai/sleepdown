@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/widget_previews.dart';
 import '../../models/course.dart';
-import '../../theme/app_theme.dart';
 import 'course_card.dart';
 
 /// 课程表周视图组件
@@ -24,24 +23,19 @@ class WeekScheduleView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // 外层容器提供统一的左右边距 (16dp)
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          // 计算列宽：在可用宽度内计算
-          // 两者都用: (可用宽度 - 时间列宽度) / 7
           final columnWidth = (constraints.maxWidth - timeColumnWidth) / 7;
 
           return Column(
             children: [
-              // 顶部日期栏
               _DateHeaderRow(
                 currentWeek: currentWeek,
                 columnWidth: columnWidth,
                 timeColumnWidth: timeColumnWidth,
               ),
-              // 课程网格
               Expanded(
                 child: _ScheduleGridInner(
                   courses: courses,
@@ -71,21 +65,20 @@ class _DateHeaderRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
-    // 计算当前周的日期范围
     final now = DateTime.now();
     final semesterStart = DateTime(now.year, 2, 16);
     final weekStart = semesterStart.add(Duration(days: (currentWeek - 1) * 7 - (semesterStart.weekday - 1)));
     final days = List.generate(7, (index) => weekStart.add(Duration(days: index)));
 
-    // 找到今天是这一周的第几天
     final today = DateTime.now();
     final todayIndex = today.difference(weekStart).inDays;
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
-        color: AppTheme.surfaceVariant.withValues(alpha: 0.3),
+        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -98,16 +91,15 @@ class _DateHeaderRow extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 月份指示器 - 与底部第1节时间对齐
           SizedBox(
             width: timeColumnWidth,
             child: Container(
               height: 56,
               alignment: Alignment.center,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 border: Border(
                   right: BorderSide(
-                    color: Color(0x1AC3C7CF),
+                    color: colorScheme.outlineVariant.withValues(alpha: 0.1),
                     width: 1,
                   ),
                 ),
@@ -118,7 +110,7 @@ class _DateHeaderRow extends StatelessWidget {
                   Text(
                     '${days[0].month}',
                     style: theme.textTheme.titleMedium?.copyWith(
-                      color: AppTheme.onSurfaceVariant,
+                      color: colorScheme.onSurfaceVariant,
                       fontWeight: FontWeight.w500,
                       fontSize: 16,
                     ),
@@ -126,7 +118,7 @@ class _DateHeaderRow extends StatelessWidget {
                   Text(
                     '月',
                     style: theme.textTheme.labelMedium?.copyWith(
-                      color: AppTheme.onSurfaceVariant,
+                      color: colorScheme.onSurfaceVariant,
                       fontSize: 12,
                     ),
                   ),
@@ -134,7 +126,6 @@ class _DateHeaderRow extends StatelessWidget {
               ),
             ),
           ),
-          // 7天日期列 - 与底部7节课对齐
           ...List.generate(7, (index) {
             final date = days[index];
             final isToday = index == todayIndex && currentWeek == _getWeekNumber(today, semesterStart);
@@ -143,10 +134,10 @@ class _DateHeaderRow extends StatelessWidget {
               width: columnWidth,
               height: 56,
               alignment: Alignment.center,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 border: Border(
                   right: BorderSide(
-                    color: Color(0x1AC3C7CF),
+                    color: colorScheme.outlineVariant.withValues(alpha: 0.1),
                     width: 1,
                   ),
                 ),
@@ -157,7 +148,7 @@ class _DateHeaderRow extends StatelessWidget {
                   Text(
                     _getDayName(date.weekday),
                     style: theme.textTheme.labelSmall?.copyWith(
-                      color: AppTheme.onSurfaceVariant,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -166,13 +157,13 @@ class _DateHeaderRow extends StatelessWidget {
                     height: 32,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: isToday ? theme.colorScheme.primary : null,
+                      color: isToday ? colorScheme.primary : null,
                       shape: BoxShape.circle,
                     ),
                     child: Text(
                       '${date.day}',
                       style: theme.textTheme.labelLarge?.copyWith(
-                        color: isToday ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface,
+                        color: isToday ? colorScheme.onPrimary : colorScheme.onSurface,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -212,9 +203,10 @@ class _ScheduleGridInner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return LayoutBuilder(
       builder: (context, constraints) {
-        // 使用与顶部完全一致的列宽计算方式
         final columnWidth = (constraints.maxWidth - timeColumnWidth) / 7;
 
         return SingleChildScrollView(
@@ -222,7 +214,6 @@ class _ScheduleGridInner extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 时间列
               SizedBox(
                 width: timeColumnWidth,
                 child: Column(
@@ -231,14 +222,14 @@ class _ScheduleGridInner extends StatelessWidget {
                     return Container(
                       height: sectionHeight,
                       alignment: Alignment.center,
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         border: Border(
                           bottom: BorderSide(
-                            color: Color(0x1AC3C7CF),
+                            color: colorScheme.outlineVariant.withValues(alpha: 0.1),
                             width: 1,
                           ),
                           right: BorderSide(
-                            color: Color(0x1AC3C7CF),
+                            color: colorScheme.outlineVariant.withValues(alpha: 0.1),
                             width: 1,
                           ),
                         ),
@@ -251,7 +242,7 @@ class _ScheduleGridInner extends StatelessWidget {
                             Text(
                               '$section',
                               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                color: AppTheme.onSurface,
+                                color: colorScheme.onSurface,
                                 fontWeight: FontWeight.w500,
                                 fontSize: 14,
                               ),
@@ -259,7 +250,7 @@ class _ScheduleGridInner extends StatelessWidget {
                             Text(
                               _getTimeForSection(section),
                               style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                color: AppTheme.onSurfaceVariant,
+                                color: colorScheme.onSurfaceVariant,
                                 fontSize: 8,
                                 height: 1.1,
                               ),
@@ -272,21 +263,19 @@ class _ScheduleGridInner extends StatelessWidget {
                   }),
                 ),
               ),
-              // 课程网格区域
               Expanded(
                 child: SizedBox(
                   height: totalSections * sectionHeight,
                   child: Stack(
                     children: [
-                      // 水平网格线
                       Column(
                         children: List.generate(totalSections, (index) {
                           return Container(
                             height: sectionHeight,
-                            decoration: const BoxDecoration(
+                            decoration: BoxDecoration(
                               border: Border(
                                 bottom: BorderSide(
-                                  color: Color(0x1AC3C7CF),
+                                  color: colorScheme.outlineVariant.withValues(alpha: 0.1),
                                   width: 1,
                                 ),
                               ),
@@ -294,16 +283,15 @@ class _ScheduleGridInner extends StatelessWidget {
                           );
                         }),
                       ),
-                      // 垂直网格线
                       Row(
                         children: List.generate(7, (index) {
                           return Container(
                             width: columnWidth,
                             height: totalSections * sectionHeight,
-                            decoration: const BoxDecoration(
+                            decoration: BoxDecoration(
                               border: Border(
                                 right: BorderSide(
-                                  color: Color(0x1AC3C7CF),
+                                  color: colorScheme.outlineVariant.withValues(alpha: 0.1),
                                   width: 1,
                                 ),
                               ),
@@ -311,7 +299,6 @@ class _ScheduleGridInner extends StatelessWidget {
                           );
                         }),
                       ),
-                      // 课程卡片
                       ...courses.map((course) {
                         final isActive = course.isActiveInWeek(currentWeek);
 
