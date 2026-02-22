@@ -19,7 +19,8 @@ class CourseCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final cardColors = AppTheme.getCourseCardColorScheme(course.colorValue);
+    final brightness = theme.brightness;
+    final cardColors = AppTheme.getCourseCardColorScheme(course.colorValue, brightness);
 
     return GestureDetector(
       onTap: onTap,
@@ -109,7 +110,7 @@ class CourseCard extends StatelessWidget {
 
 // ============== Widget Preview Annotations ==============
 
-/// 预览: CourseCard - 当前周课程卡片
+/// 预览: CourseCard - 当前周课程卡片 (亮色)
 @Preview(
   name: 'CourseCard - 当前周',
   group: 'CourseCard',
@@ -118,6 +119,41 @@ class CourseCard extends StatelessWidget {
 Widget courseCardPreview() {
   return MaterialApp(
     theme: AppTheme.lightTheme,
+    home: Scaffold(
+      body: SizedBox(
+        width: 100,
+        height: 80,
+        child: CourseCard(
+          course: Course(
+            id: '1',
+            name: '数据结构',
+            teacher: '张三',
+            location: 'A301',
+            dayOfWeek: 1,
+            startSection: 1,
+            endSection: 2,
+            weekRanges: [WeekRange(start: 1, end: 16)],
+            colorValue: 0,
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+          ),
+          isCurrentWeek: true,
+        ),
+      ),
+    ),
+  );
+}
+
+/// 预览: CourseCard - 当前周课程卡片 (暗色)
+@Preview(
+  name: 'CourseCard - 当前周(暗色)',
+  group: 'CourseCard',
+  size: Size(100, 80),
+  brightness: Brightness.dark,
+)
+Widget courseCardDarkPreview() {
+  return MaterialApp(
+    theme: AppTheme.darkTheme,
     home: Scaffold(
       body: SizedBox(
         width: 100,
@@ -177,7 +213,7 @@ Widget courseCardNotCurrentWeekPreview() {
   );
 }
 
-/// 预览: CourseCard - 多颜色变体
+/// 预览: CourseCard - 多颜色变体 (亮色)
 @Preview(
   name: 'CourseCard - 颜色变体',
   group: 'CourseCard',
@@ -186,6 +222,45 @@ Widget courseCardNotCurrentWeekPreview() {
 Widget courseCardMultiColorPreview() {
   return MaterialApp(
     theme: AppTheme.lightTheme,
+    home: Scaffold(
+      body: Row(
+        children: List.generate(5, (index) {
+          return SizedBox(
+            width: 100,
+            height: 80,
+            child: CourseCard(
+              course: Course(
+                id: '$index',
+                name: '课程$index',
+                teacher: '教师$index',
+                location: '教室$index',
+                dayOfWeek: 1,
+                startSection: 1,
+                endSection: 2,
+                weekRanges: [WeekRange(start: 1, end: 16)],
+                colorValue: index,
+                createdAt: DateTime.now(),
+                updatedAt: DateTime.now(),
+              ),
+              isCurrentWeek: true,
+            ),
+          );
+        }),
+      ),
+    ),
+  );
+}
+
+/// 预览: CourseCard - 多颜色变体 (暗色)
+@Preview(
+  name: 'CourseCard - 颜色变体(暗色)',
+  group: 'CourseCard',
+  size: Size(500, 100),
+  brightness: Brightness.dark,
+)
+Widget courseCardMultiColorDarkPreview() {
+  return MaterialApp(
+    theme: AppTheme.darkTheme,
     home: Scaffold(
       body: Row(
         children: List.generate(5, (index) {
