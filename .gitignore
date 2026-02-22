@@ -49,3 +49,5 @@ app.*.map.json
 # agent
 CLAUDE.md
 .claude/
+
+temp/

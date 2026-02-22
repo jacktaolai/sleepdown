@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/widget_previews.dart';
+import '../../models/app_settings.dart';
+import '../../models/time_schedule.dart';
+import '../../repository/settings_repository.dart';
 import '../../providers/providers.dart';
 import '../../theme/app_theme.dart';
 
@@ -110,4 +114,124 @@ class WeekCalendarStrip extends ConsumerWidget {
     const days = ['一', '二', '三', '四', '五', '六', '日'];
     return days[weekday - 1];
   }
+}
+
+// ============== Mock Repository for Preview ==============
+
+/// 用于预览的 Mock SettingsRepository
+class MockSettingsRepository implements SettingsRepository {
+  final AppSettings _settings;
+
+  MockSettingsRepository({AppSettings? settings})
+      : _settings = settings ?? const AppSettings();
+
+  @override
+  Future<AppSettings> getSettings() async => _settings;
+
+  @override
+  Future<void> updateSettings(AppSettings settings) async {}
+
+  @override
+  Future<TimeSchedule?> getTimeSchedule() async => null;
+
+  @override
+  Future<TimeSchedule?> getTimeScheduleById(String id) async => null;
+
+  @override
+  Future<List<TimeSchedule>> getAllTimeSchedules() async => [];
+
+  @override
+  Future<void> updateTimeSchedule(TimeSchedule schedule) async {}
+
+  @override
+  Future<void> addTimeSchedule(TimeSchedule schedule) async {}
+
+  @override
+  Future<void> deleteTimeSchedule(String id) async {}
+
+  @override
+  Future<void> setDefaultTimeSchedule(String id) async {}
+
+  @override
+  Future<void> close() async {}
+}
+
+// ============== Widget Preview Annotations ==============
+
+/// 预览: WeekCalendarStrip - 当前周
+@Preview(
+  name: 'WeekCalendarStrip - 第1周',
+  group: 'WeekCalendarStrip',
+  size: Size(360, 80),
+)
+Widget weekCalendarStripPreview() {
+  // 设置学期开始日期为2026年2月16日（周一），第1周
+  final settings = AppSettings(
+    semesterStartDate: DateTime(2026, 2, 16),
+    totalWeeks: 20,
+  );
+
+  return ProviderScope(
+    overrides: [
+      settingsRepositoryProvider.overrideWithValue(MockSettingsRepository(settings: settings)),
+    ],
+    child: MaterialApp(
+      theme: ThemeData.light(useMaterial3: true),
+      home: const Scaffold(
+        body: WeekCalendarStrip(),
+      ),
+    ),
+  );
+}
+
+/// 预览: WeekCalendarStrip - 第8周（今天）
+@Preview(
+  name: 'WeekCalendarStrip - 第8周(今天)',
+  group: 'WeekCalendarStrip',
+  size: Size(360, 80),
+)
+Widget weekCalendarStripWeek8Preview() {
+  // 设置学期开始日期为2026年2月16日，第8周周三为今天(2026-04-10)
+  final settings = AppSettings(
+    semesterStartDate: DateTime(2026, 2, 16),
+    totalWeeks: 20,
+  );
+
+  return ProviderScope(
+    overrides: [
+      settingsRepositoryProvider.overrideWithValue(MockSettingsRepository(settings: settings)),
+    ],
+    child: MaterialApp(
+      theme: ThemeData.light(useMaterial3: true),
+      home: const Scaffold(
+        body: WeekCalendarStrip(),
+      ),
+    ),
+  );
+}
+
+/// 预览: WeekCalendarStrip - 暗色模式
+@Preview(
+  name: 'WeekCalendarStrip - 暗色模式',
+  group: 'WeekCalendarStrip',
+  size: Size(360, 80),
+  brightness: Brightness.dark,
+)
+Widget weekCalendarStripDarkPreview() {
+  final settings = AppSettings(
+    semesterStartDate: DateTime(2026, 2, 16),
+    totalWeeks: 20,
+  );
+
+  return ProviderScope(
+    overrides: [
+      settingsRepositoryProvider.overrideWithValue(MockSettingsRepository(settings: settings)),
+    ],
+    child: MaterialApp(
+      theme: ThemeData.dark(useMaterial3: true),
+      home: const Scaffold(
+        body: WeekCalendarStrip(),
+      ),
+    ),
+  );
 }
