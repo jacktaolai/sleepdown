@@ -26,6 +26,7 @@ class SettingsRepositoryImpl implements SettingsRepository {
 
   @override
   Future<AppSettings> getSettings() async {
+    /// TODO: 考虑使用 [SharedPreferencesAsync] 或 [SharedPreferencesWithCache]
     final prefs = await SharedPreferences.getInstance();
     final settingsJson = prefs.getString(_settingsKey);
     if (settingsJson == null) {

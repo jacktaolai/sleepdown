@@ -29,6 +29,7 @@ class DatabaseHelper {
     );
   }
 
+  ///TODO:id可以考虑自动生成
   Future<void> _onCreate(Database db, int version) async {
     await db.execute('''
       CREATE TABLE courses (

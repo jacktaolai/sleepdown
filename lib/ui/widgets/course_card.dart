@@ -3,7 +3,7 @@ import 'package:flutter/widget_previews.dart';
 import '../../models/course.dart';
 import '../../theme/app_theme.dart';
 
-class CourseCard extends StatelessWidget {
+class CourseCard extends Card {
   final Course course;
   final bool isCurrentWeek;
   final VoidCallback? onTap;
@@ -114,15 +114,15 @@ class CourseCard extends StatelessWidget {
 @Preview(
   name: 'CourseCard - 当前周',
   group: 'CourseCard',
-  size: Size(100, 80),
+  size: Size(50, 120),
 )
 Widget courseCardPreview() {
   return MaterialApp(
     theme: AppTheme.lightTheme,
     home: Scaffold(
       body: SizedBox(
-        width: 100,
-        height: 80,
+        width: 50,
+        height: 120,
         child: CourseCard(
           course: Course(
             id: '1',
@@ -148,7 +148,7 @@ Widget courseCardPreview() {
 @Preview(
   name: 'CourseCard - 当前周(暗色)',
   group: 'CourseCard',
-  size: Size(100, 80),
+  size: Size(50, 120),
   brightness: Brightness.dark,
 )
 Widget courseCardDarkPreview() {
@@ -156,8 +156,8 @@ Widget courseCardDarkPreview() {
     theme: AppTheme.darkTheme,
     home: Scaffold(
       body: SizedBox(
-        width: 100,
-        height: 80,
+        width: 50,
+        height: 120,
         child: CourseCard(
           course: Course(
             id: '1',
@@ -183,15 +183,15 @@ Widget courseCardDarkPreview() {
 @Preview(
   name: 'CourseCard - 非本周',
   group: 'CourseCard',
-  size: Size(100, 80),
+  size: Size(50, 120),
 )
 Widget courseCardNotCurrentWeekPreview() {
   return MaterialApp(
     theme: AppTheme.lightTheme,
     home: Scaffold(
       body: SizedBox(
-        width: 100,
-        height: 80,
+        width: 50,
+        height: 120,
         child: CourseCard(
           course: Course(
             id: '2',
@@ -217,7 +217,7 @@ Widget courseCardNotCurrentWeekPreview() {
 @Preview(
   name: 'CourseCard - 颜色变体',
   group: 'CourseCard',
-  size: Size(500, 100),
+  size: Size(250, 120),
 )
 Widget courseCardMultiColorPreview() {
   return MaterialApp(
@@ -226,8 +226,8 @@ Widget courseCardMultiColorPreview() {
       body: Row(
         children: List.generate(5, (index) {
           return SizedBox(
-            width: 100,
-            height: 80,
+            width: 50,
+            height: 120,
             child: CourseCard(
               course: Course(
                 id: '$index',

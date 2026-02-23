@@ -13,7 +13,7 @@ void main() {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
   });
-
+  // 清空数据库方便后续测试
   Future<void> cleanDatabase() async {
     try {
       final dbPath = await getDatabasesPath();
@@ -26,7 +26,7 @@ void main() {
       print('Warning: Could not clean database: $e');
     }
   }
-
+  // 所有测试结束后清空数据库
   tearDownAll(() async {
     await cleanDatabase();
   });

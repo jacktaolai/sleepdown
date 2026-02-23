@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+/// 课程是在奇数周、偶数周还是全部周上课
 enum WeekType { all, odd, even }
 
 class WeekRange {
@@ -98,6 +99,13 @@ class Course {
     required this.updatedAt,
   });
 
+  /// 判断课程是否在本周上
+  /// 
+  /// **参数**：
+  /// * [week] 要判断的周数（从1开始）
+  /// 
+  /// **返回值**：
+  /// * 如果课程在本周上，则返回true；否则返回false
   bool isActiveInWeek(int week) {
     return weekRanges.any((range) => range.contains(week));
   }
@@ -121,6 +129,13 @@ class Course {
     };
   }
 
+  /// 从数据库映射到课程模型
+  /// 
+  /// **参数**：
+  /// * [map] 从数据库中查询到的课程映射
+  /// 
+  /// **返回值**：
+  /// * 返回一个Course模型
   factory Course.fromMap(Map<String, dynamic> map) {
     final weekRangesJson = map['week_ranges'] as String;
     final weekRangesList = jsonDecode(weekRangesJson) as List;
