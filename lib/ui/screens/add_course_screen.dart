@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widget_previews.dart';
 
+// TODO:将该页面查封为组件
 class AddCourseScreen extends StatefulWidget {
   const AddCourseScreen({super.key});
 

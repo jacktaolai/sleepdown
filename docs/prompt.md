@@ -129,7 +129,8 @@ m种子生成），而且我们不需要手动定义暗色模式。关于主题�
 同时在没有主题颜色被定义的时候我们可以保持MD3默认的主题颜色                        
 
 ---
-course应该在course_table，这样可以支持存储多个课程表，course_table应该关联time_schedule,以及学期开始时间。同时提供获取所有课程的接口，获取所有老师的接口，获取所有颜色的接口，获取所有教室的接口
+course应该在course_table里，这样可以支持存储多个课程表，course_table应该关联time_schedule,以及学期开始时间。同时提供获取所有课程的接口，获取所有老师的接口，获取所有颜色的接口，获取所有教室的接口
+course应该还要有一个学分的属性
 course应该存储course_info，包含课程名称，教师，教室，时间等信息，这样一个课程可以有多个上课的地点或者老师，为了支持填写课程节数以及时间段两种方式，二者只支持填写其中一种，不能同时填写。
 
 废弃以下策略，关于上课的周数，我们之间存离散的量，方便迅速查找该周的课程如(1，2，8)，在 Repository 层转换为 `[WeekRange(1,2,all), WeekRange(8,8,all)]`，方便前端展示
@@ -138,3 +139,51 @@ course应该存储course_info，包含课程名称，教师，教室，时间等
 > - 用户输入 `1、2、8` 周时，在 Repository 层转换为 `[WeekRange(1,1,all), WeekRange(2,2,all), WeekRange(8,8,all)]`
 > - 数据库存储时，将 `weekRanges` 序列化为 JSON 字符串
 > - 查询时反序列化还原为 `List<WeekRange>`
+
+
+---
+代码review发现的一些问题，不作为提示词输入，后续复核，在使用更规范的提示词进行输入
+lib\ui\widgets\course_card.dart
+boxShadow: [
+  /// TODO：1.这个阴影效果根本不明显
+  /// TODO：2.增加透明度后应用效果明显，但是暗色模式下会导致阴影为黑色，无效果
+  /// TODO：3.非本周是否要添加阴影？
+
+course传入的icon又没用，屎山代码
+
+ schedule // TODO: 从 SettingsProvider 获取时间设置
+
+ 所有界面代码都没有严格按照MD3设计规范，尤其是颜色部分。所有组件都应该统一使用一个主题色，只是使用主题色的不同层次，例如container/surface/on-container/on-surface等颜色。
+ 然后课程卡片的颜色有别于主题色，但是也应该预先定义好统一管理，这样才能够适配暗色模式
+
+schedule.dart
+现在是通过定义一节课的高度来固定卡片高度，但是我们，如果按照时间范围(如7:00-9:00)，匹配不到一节课，所以应该根据时间范围动态计算高度
+   static const double sectionHeight = 64.0;
+
+   不限制一天最多的课程，默认一天十二节课，一般是从时间表里获取一天的节数和时间之间的关系的
+   shcedule_grid里的                        
+   color: colorScheme.outlineVariant.withValues(alpha: 0.1),
+   是用来表示边框的线的，调整为全透明就看不到了。
+   constant 里可以定义这么一个参数
+
+   schedule_grid.dart里的水平网格线使用的是固定颜色，   color: Color(0x1AC3C7CF),应该和上面保持一样                        color: colorScheme.outlineVariant.withValues(alpha: 0.1),
+
+  ...courses.map((course) {
+    这是什么语法啊
+
+schedule_grid.dart里
+```dart
+  onTap: () {
+    /// Navigator.of(context): 获取导航器
+    /// 用于管理页面栈（类似 Android 的 Intent）
+    Navigator.of(context).pushNamed(
+      '/course/${course.id}',
+```
+页面里是不是混进逻辑去了
+
+---
+### 用例
+- 启动软件，软件的主页面是周课表，显示当前周的所有课程。
+- 周课表页面要求，在
+
+
