@@ -1,5 +1,3 @@
-import 'package:uuid/uuid.dart';
-
 class CourseInfo {
   final String id;
   final String courseTableId;
@@ -21,24 +19,25 @@ class CourseInfo {
     required this.updatedAt,
   });
 
-  /// 创建新的课程信息
-  factory CourseInfo.create({
-    required String courseTableId,
-    required String name,
+  CourseInfo copyWith({
+    String? id,
+    String? courseTableId,
+    String? name,
     double? credit,
-    required int colorValue,
+    int? colorValue,
     String? note,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
-    final now = DateTime.now();
     return CourseInfo(
-      id: const Uuid().v4(),
-      courseTableId: courseTableId,
-      name: name,
-      credit: credit,
-      colorValue: colorValue,
-      note: note,
-      createdAt: now,
-      updatedAt: now,
+      id: id ?? this.id,
+      courseTableId: courseTableId ?? this.courseTableId,
+      name: name ?? this.name,
+      credit: credit ?? this.credit,
+      colorValue: colorValue ?? this.colorValue,
+      note: note ?? this.note,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
@@ -63,46 +62,8 @@ class CourseInfo {
       credit: map['credit'] as double?,
       colorValue: map['color_value'] as int,
       note: map['note'] as String?,
-      createdAt:
-          DateTime.fromMillisecondsSinceEpoch(map['created_at'] as int),
-      updatedAt:
-          DateTime.fromMillisecondsSinceEpoch(map['updated_at'] as int),
+      createdAt: DateTime.fromMillisecondsSinceEpoch(map['created_at'] as int),
+      updatedAt: DateTime.fromMillisecondsSinceEpoch(map['updated_at'] as int),
     );
-  }
-
-  CourseInfo copyWith({
-    String? id,
-    String? courseTableId,
-    String? name,
-    double? credit,
-    int? colorValue,
-    String? note,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-  }) {
-    return CourseInfo(
-      id: id ?? this.id,
-      courseTableId: courseTableId ?? this.courseTableId,
-      name: name ?? this.name,
-      credit: credit ?? this.credit,
-      colorValue: colorValue ?? this.colorValue,
-      note: note ?? this.note,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? DateTime.now(),
-    );
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    return other is CourseInfo && other.id == id;
-  }
-
-  @override
-  int get hashCode => id.hashCode;
-
-  @override
-  String toString() {
-    return 'CourseInfo(id: $id, courseTableId: $courseTableId, name: $name, credit: $credit)';
   }
 }

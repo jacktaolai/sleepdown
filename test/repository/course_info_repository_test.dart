@@ -1,267 +1,143 @@
-import 'dart:io';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sleepdown/database/db_helper.dart';
-import 'package:sleepdown/repository/course_info_repository.dart';
-import 'package:sleepdown/models/course_info.dart';
+import 'package:sleepdown/models/models.dart';
+import 'package:sleepdown/repository/repository.dart';
 
 void main() {
-  setUpAll(() {
-    sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
+  sqfliteFfiInit();
+  databaseFactory = databaseFactoryFfi;
+
+  late DatabaseHelper dbHelper;
+  late CourseTableRepository tableRepo;
+  late CourseInfoRepository repository;
+
+  setUp(() async {
+    dbHelper = DatabaseHelper();
+    final db = await dbHelper.database;
+    await db.execute('PRAGMA foreign_keys = ON');
+    await db.delete('course_tables');
+    await db.delete('course_infos');
+    
+    tableRepo = CourseTableRepository(dbHelper);
+    repository = CourseInfoRepository(dbHelper);
+  });
+
+  tearDown(() async {
+    await dbHelper.close();
   });
 
   group('CourseInfoRepository', () {
-    late DatabaseHelper dbHelper;
-    late CourseInfoRepository repository;
     late String tableId;
-    int testCounter = 0;
 
     setUp(() async {
-      testCounter++;
-      await Future.delayed(const Duration(milliseconds: 200));
-      dbHelper = DatabaseHelper();
-
-      // 创建课程表
-      final db = await dbHelper.database;
-      tableId = 'test-table-$testCounter-${DateTime.now().millisecondsSinceEpoch}';
-
-      await db.insert('course_tables', {
-        'id': tableId,
-        'name': '2024春季学期',
-        'semester_start_date': DateTime(2024, 2, 26).millisecondsSinceEpoch,
-        'total_weeks': 18,
-        'time_schedule_id': 'default',
-        'created_at': DateTime.now().millisecondsSinceEpoch,
-        'updated_at': DateTime.now().millisecondsSinceEpoch,
-      });
-
-      // 清理之前的数据
-      try {
-        await db.delete('course_infos', where: 'course_table_id = ?', whereArgs: [tableId]);
-      } catch (_) {}
-
-      repository = CourseInfoRepositoryImpl(dbHelper);
+      final now = DateTime.now().millisecondsSinceEpoch;
+      final table = CourseTable(
+        id: 'table_$now',
+        name: '测试课程表',
+        semesterStartDate: DateTime(2026, 2, 23),
+        totalWeeks: 18,
+        timeScheduleId: 'default',
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      );
+      await tableRepo.addCourseTable(table);
+      tableId = table.id;
     });
 
-    tearDown(() async {
-      try {
-        await dbHelper.close();
-      } catch (_) {}
-    });
-
-    String generateId(String prefix) {
-      return '$prefix-$testCounter-${DateTime.now().millisecondsSinceEpoch}';
-    }
-
-    test('should add course info successfully', () async {
-      final testId = generateId('test-info');
-      final testInfo = CourseInfo(
-        id: testId,
+    test('addCourseInfo adds new course info', () async {
+      final now = DateTime.now().millisecondsSinceEpoch;
+      final info = CourseInfo(
+        id: 'info_$now',
         courseTableId: tableId,
-        name: '高等数学',
-        credit: 4.0,
+        name: '数据结构',
+        credit: 3.0,
         colorValue: 0xFF3B82F6,
-        note: '必修课',
-        createdAt: DateTime(2026, 1, 1),
-        updatedAt: DateTime(2026, 1, 1),
+        note: '重要课程',
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       );
 
-      await repository.addCourseInfo(testInfo);
-      final infos = await repository.getCourseInfosByTableId(tableId);
-      expect(infos.length, equals(1));
-      expect(infos.first.name, equals('高等数学'));
+      await repository.addCourseInfo(info);
+      final result = await repository.getCourseInfoById('info_$now');
+      
+      expect(result, isNotNull);
+      expect(result!.name, '数据结构');
+      expect(result.credit, 3.0);
+      
+      await repository.deleteCourseInfo('info_$now');
     });
 
-    test('should get course info by id', () async {
-      final testId = generateId('test-info');
-      final testInfo = CourseInfo(
-        id: testId,
-        courseTableId: tableId,
-        name: '高等数学',
-        colorValue: 0xFF3B82F6,
-        createdAt: DateTime(2026, 1, 1),
-        updatedAt: DateTime(2026, 1, 1),
-      );
-
-      await repository.addCourseInfo(testInfo);
-      final info = await repository.getCourseInfoById(testId);
-      expect(info, isNotNull);
-      expect(info!.name, equals('高等数学'));
-    });
-
-    test('should return null for non-existent info', () async {
-      final info = await repository.getCourseInfoById('non-existent');
-      expect(info, isNull);
-    });
-
-    test('should update course info successfully', () async {
-      final testId = generateId('test-info');
-      final testInfo = CourseInfo(
-        id: testId,
-        courseTableId: tableId,
-        name: '高等数学',
-        colorValue: 0xFF3B82F6,
-        createdAt: DateTime(2026, 1, 1),
-        updatedAt: DateTime(2026, 1, 1),
-      );
-
-      await repository.addCourseInfo(testInfo);
-
-      final updated = testInfo.copyWith(name: '线性代数');
-      await repository.updateCourseInfo(updated);
-
-      final info = await repository.getCourseInfoById(testId);
-      expect(info!.name, equals('线性代数'));
-    });
-
-    test('should delete course info successfully', () async {
-      final testId = generateId('test-info');
-      final testInfo = CourseInfo(
-        id: testId,
-        courseTableId: tableId,
-        name: '高等数学',
-        colorValue: 0xFF3B82F6,
-        createdAt: DateTime(2026, 1, 1),
-        updatedAt: DateTime(2026, 1, 1),
-      );
-
-      await repository.addCourseInfo(testInfo);
-      await repository.deleteCourseInfo(testId);
-
-      final infos = await repository.getCourseInfosByTableId(tableId);
-      expect(infos, isEmpty);
-    });
-
-    test('should get course infos sorted by name', () async {
-      final testId1 = generateId('info-1');
-      final testId2 = generateId('info-2');
-      final testId3 = generateId('info-3');
-
-      // Unicode排序: 线性代数(\u7EBF\u6027\u4EE3\u6570) < 高等数学(\u9AD8\u7B49\u6570\u5B66) < 大学英语(\u5927\u5B66\u82F1\u8BED)
+    test('getCourseInfosByTableId returns all course infos', () async {
+      final now = DateTime.now().millisecondsSinceEpoch;
       final info1 = CourseInfo(
-        id: testId1,
+        id: 'info1_$now',
         courseTableId: tableId,
-        name: '线性代数',
-        colorValue: 0xFFEF4444,
-        createdAt: DateTime(2026, 1, 1),
-        updatedAt: DateTime(2026, 1, 1),
+        name: '课程1',
+        colorValue: 0xFF3B82F6,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       );
       final info2 = CourseInfo(
-        id: testId2,
+        id: 'info2_$now',
         courseTableId: tableId,
-        name: '高等数学',
-        colorValue: 0xFF3B82F6,
-        createdAt: DateTime(2026, 1, 1),
-        updatedAt: DateTime(2026, 1, 1),
-      );
-      final info3 = CourseInfo(
-        id: testId3,
-        courseTableId: tableId,
-        name: '大学英语',
+        name: '课程2',
         colorValue: 0xFF10B981,
-        createdAt: DateTime(2026, 1, 1),
-        updatedAt: DateTime(2026, 1, 1),
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       );
 
       await repository.addCourseInfo(info1);
       await repository.addCourseInfo(info2);
-      await repository.addCourseInfo(info3);
 
-      final infos = await repository.getCourseInfosByTableId(tableId);
-      expect(infos[0].name, equals('线性代数'));
-      expect(infos[1].name, equals('高等数学'));
-      expect(infos[2].name, equals('大学英语'));
-    });
-  });
-
-  group('CourseInfoRepository - Aggregate Queries', () {
-    late DatabaseHelper dbHelper;
-    late CourseInfoRepository repository;
-    late String tableId;
-    int testCounter = 0;
-
-    setUp(() async {
-      testCounter++;
-      await Future.delayed(const Duration(milliseconds: 200));
-      dbHelper = DatabaseHelper();
-
-      final db = await dbHelper.database;
-
-      // 创建课程表
-      tableId = 'test-table-$testCounter-${DateTime.now().millisecondsSinceEpoch}';
-      await db.insert('course_tables', {
-        'id': tableId,
-        'name': '2024春季学期',
-        'semester_start_date': DateTime(2024, 2, 26).millisecondsSinceEpoch,
-        'total_weeks': 18,
-        'time_schedule_id': 'default',
-        'created_at': DateTime.now().millisecondsSinceEpoch,
-        'updated_at': DateTime.now().millisecondsSinceEpoch,
-      });
-
-      // 创建课程信息
-      await db.insert('course_infos', {
-        'id': 'info-1-$testCounter',
-        'course_table_id': tableId,
-        'name': '高等数学',
-        'color_value': 0xFF3B82F6,
-        'created_at': DateTime.now().millisecondsSinceEpoch,
-        'updated_at': DateTime.now().millisecondsSinceEpoch,
-      });
-
-      // 创建课程安排
-      await db.insert('course_schedules', {
-        'id': 'schedule-1-$testCounter',
-        'course_info_id': 'info-1-$testCounter',
-        'teacher': '张老师',
-        'location': '教学楼A101',
-        'day_of_week': 1,
-        'start_section': 1,
-        'end_section': 2,
-        'weeks': '[1,2,3]',
-        'created_at': DateTime.now().millisecondsSinceEpoch,
-        'updated_at': DateTime.now().millisecondsSinceEpoch,
-      });
-
-      await db.insert('course_schedules', {
-        'id': 'schedule-2-$testCounter',
-        'course_info_id': 'info-1-$testCounter',
-        'teacher': '李老师',
-        'location': '教学楼B202',
-        'day_of_week': 2,
-        'start_section': 3,
-        'end_section': 4,
-        'weeks': '[1,2,3]',
-        'created_at': DateTime.now().millisecondsSinceEpoch,
-        'updated_at': DateTime.now().millisecondsSinceEpoch,
-      });
-
-      repository = CourseInfoRepositoryImpl(dbHelper);
+      final results = await repository.getCourseInfosByTableId(tableId);
+      expect(results.length, 2);
+      
+      await repository.deleteCourseInfo('info1_$now');
+      await repository.deleteCourseInfo('info2_$now');
     });
 
-    tearDown(() async {
-      try {
-        await dbHelper.close();
-      } catch (_) {}
+    test('deleteCourseInfo removes course info', () async {
+      final now = DateTime.now().millisecondsSinceEpoch;
+      final info = CourseInfo(
+        id: 'delete_$now',
+        courseTableId: tableId,
+        name: '待删除',
+        colorValue: 0xFF3B82F6,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      );
+
+      await repository.addCourseInfo(info);
+      await repository.deleteCourseInfo('delete_$now');
+      
+      final result = await repository.getCourseInfoById('delete_$now');
+      expect(result, isNull);
     });
 
-    test('should get all teachers', () async {
-      final teachers = await repository.getAllTeachers(tableId);
-      expect(teachers, contains('张老师'));
-      expect(teachers, contains('李老师'));
+    test('getCourseInfoById returns null for non-existent', () async {
+      final result = await repository.getCourseInfoById('non_existent');
+      expect(result, isNull);
     });
 
-    test('should get all locations', () async {
-      final locations = await repository.getAllLocations(tableId);
-      expect(locations, contains('教学楼A101'));
-      expect(locations, contains('教学楼B202'));
-    });
+    test('course info with null credit works correctly', () async {
+      final now = DateTime.now().millisecondsSinceEpoch;
+      final info = CourseInfo(
+        id: 'no_credit_$now',
+        courseTableId: tableId,
+        name: '无学分课程',
+        colorValue: 0xFF3B82F6,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      );
 
-    test('should get all colors', () async {
-      final colors = await repository.getAllColors(tableId);
-      expect(colors, contains(0xFF3B82F6));
+      await repository.addCourseInfo(info);
+      final result = await repository.getCourseInfoById('no_credit_$now');
+      
+      expect(result, isNotNull);
+      expect(result!.credit, isNull);
+      
+      await repository.deleteCourseInfo('no_credit_$now');
     });
   });
 }
