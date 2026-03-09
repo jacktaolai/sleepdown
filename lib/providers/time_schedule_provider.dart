@@ -1,39 +1,42 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../models/models.dart';
+import '../repository/time_schedule_repository.dart';
+import 'database_helper_provider.dart';
 
-class CurrentWeekNotifier extends StateNotifier<int> {
-  final DateTime _semesterStartDate;
-  final int _totalWeeks;
+class TimeScheduleNotifier extends StateNotifier<AsyncValue<List<TimeSchedule>>> {
+  final TimeScheduleRepository _repository;
 
-  CurrentWeekNotifier(this._semesterStartDate, this._totalWeeks) 
-      : super(_calculateCurrentWeek(_semesterStartDate, _totalWeeks));
-
-  static int _calculateCurrentWeek(DateTime semesterStart, int totalWeeks) {
-    final now = DateTime.now();
-    final diff = now.difference(semesterStart).inDays;
-    if (diff < 0) return 1;
-    final week = (diff / 7).floor() + 1;
-    return week > totalWeeks ? totalWeeks : week;
+  TimeScheduleNotifier(this._repository) : super(const AsyncValue.loading()) {
+    _loadTimeSchedules();
   }
 
-  void setWeek(int week) {
-    if (week >= 1 && week <= _totalWeeks) {
-      state = week;
-    }
+  Future<void> _loadTimeSchedules() async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() => _repository.getAllTimeSchedules());
   }
 
-  void previousWeek() {
-    if (state > 1) {
-      state--;
-    }
+  Future<void> addTimeSchedule(TimeSchedule schedule) async {
+    await _repository.addTimeSchedule(schedule);
+    await _loadTimeSchedules();
   }
 
-  void nextWeek() {
-    if (state < _totalWeeks) {
-      state++;
-    }
+  Future<void> updateTimeSchedule(TimeSchedule schedule) async {
+    await _repository.updateTimeSchedule(schedule);
+    await _loadTimeSchedules();
   }
 
-  void resetToCurrentWeek() {
-    state = _calculateCurrentWeek(_semesterStartDate, _totalWeeks);
+  Future<void> deleteTimeSchedule(String id) async {
+    await _repository.deleteTimeSchedule(id);
+    await _loadTimeSchedules();
+  }
+
+  Future<void> setDefault(String id) async {
+    await _repository.setDefaultTimeSchedule(id);
+    await _loadTimeSchedules();
   }
 }
+
+final timeScheduleProvider = StateNotifierProvider<TimeScheduleNotifier, AsyncValue<List<TimeSchedule>>>((ref) {
+  final dbHelper = ref.watch(databaseHelperProvider);
+  return TimeScheduleNotifier(TimeScheduleRepository(dbHelper));
+});

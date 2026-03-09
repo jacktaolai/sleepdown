@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/models.dart';
-import '../repository/repository.dart';
+import '../repository/course_table_repository.dart';
+import 'database_helper_provider.dart';
+import 'settings_provider.dart';
 
 class CourseTableState {
   final CourseTable? table;
@@ -74,3 +76,9 @@ class CourseTableNotifier extends StateNotifier<CourseTableState> {
     }
   }
 }
+
+final courseTableProvider = StateNotifierProvider<CourseTableNotifier, CourseTableState>((ref) {
+  final dbHelper = ref.watch(databaseHelperProvider);
+  final settings = ref.watch(settingsProvider);
+  return CourseTableNotifier(CourseTableRepository(dbHelper), settings.currentCourseTableId);
+});

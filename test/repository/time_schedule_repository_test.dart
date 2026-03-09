@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sleepdown/database/db_helper.dart';
 import 'package:sleepdown/models/models.dart';
-import 'package:sleepdown/repository/repository.dart';
+import 'package:sleepdown/repository/time_schedule_repository.dart';
 
 void main() {
   sqfliteFfiInit();

@@ -2,7 +2,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sleepdown/database/db_helper.dart';
 import 'package:sleepdown/models/models.dart';
-import 'package:sleepdown/repository/repository.dart';
+import 'package:sleepdown/repository/course_table_repository.dart';
+import 'package:sleepdown/repository/course_info_repository.dart';
 
 void main() {
   sqfliteFfiInit();

@@ -319,14 +319,14 @@ CourseTable Provider (当前课程表)
 | `switchCourseTable` | tableId: String | Future\<void\> | 切换课程表 |
 | `updateCourseTable` | table: CourseTable | Future\<void\> | 更新课程表信息 |
 
-#### 4.3.2 CurrentWeekNotifier
+#### 4.3.2 DisplayedWeekNotifier
 
 | 方法 | 参数 | 返回值 | 说明 |
 |------|------|--------|------|
-| `setWeek` | week: int | void | 设置指定周 |
-| `previousWeek` | - | void | 上一周 |
-| `nextWeek` | - | void | 下一周 |
-| `resetToCurrentWeek` | - | void | 重置为当前周 |
+| `setDisplayedWeek` | week: int | void | 设置指定的展示周 |
+| `switchToPreviousWeek` | - | void | 切换到上一个展示周 |
+| `switchToNextWeek` | - | void | 切换到下一个展示周 |
+| `resetToActualCurrentWeek` | - | void | 重置展示周为学期/系统的真实当前周 |
 
 #### 4.3.3 CourseInfoNotifier
 
@@ -423,6 +423,13 @@ CourseTable Provider (当前课程表)
 | `getSettings` | - | Future\<AppSettings\> | 获取应用设置 |
 | `updateSettings` | settings: AppSettings | Future\<void\> | 更新应用设置 |
 
+**存储方式**：使用 SharedPreferences
+
+| Key | 类型 | 说明 |
+|-----|------|------|
+| `theme_mode` | int | ThemeMode 枚举索引 (0=system, 1=light, 2=dark) |
+| `current_course_table_id` | String? | 当前使用的课程表 ID |
+
 ---
 
 ## 6. 数据流设计
@@ -483,40 +490,51 @@ CourseTable Provider (当前课程表)
 lib/
 ├── main.dart
 ├── models/                      # 数据模型
-│   ├── course_table.dart
+│   ├── models.dart              # 导出所有模型
+│   ├── app_settings.dart
 │   ├── course_info.dart
 │   ├── course_schedule.dart
-│   ├── time_schedule.dart
-│   └── app_settings.dart
+│   ├── course_table.dart
+│   └── time_schedule.dart
 ├── providers/                   # 状态管理
-│   ├── course_table_provider.dart
-│   ├── course_info_provider.dart
-│   ├── course_schedule_provider.dart
-│   ├── time_schedule_provider.dart
+│   ├── providers.dart           # 导出所有 Provider
 │   ├── settings_provider.dart
+│   ├── course_table_provider.dart
+│   ├── time_schedule_provider.dart
 │   └── weekly_courses_provider.dart
 ├── repository/                  # 数据仓库
+│   ├── repository.dart          # 导出所有 Repository
 │   ├── course_table_repository.dart
 │   ├── course_info_repository.dart
 │   ├── course_schedule_repository.dart
 │   ├── time_schedule_repository.dart
 │   └── settings_repository.dart
-├── database/                    # 数据库
-│   └── db_helper.dart
-├── screens/                     # 页面
-│   ├── home_screen.dart
-│   ├── course_detail_screen.dart
-│   ├── course_edit_screen.dart
-│   ├── settings_screen.dart
-│   └── time_settings_screen.dart
-├── widgets/                     # 组件
-│   ├── course_card.dart
-│   ├── week_selector.dart
-│   └── schedule_grid.dart
-└── utils/                       # 工具类
-    ├── week_calculator.dart
-    ├── week_display_formatter.dart
-    └── constants.dart
+└── database/                    # SQLite 数据库
+    └── db_helper.dart
+```
+
+**测试目录**：
+
+```
+test/
+├── database/
+│   └── db_helper_test.dart
+├── models/
+│   ├── app_settings_test.dart
+│   ├── course_info_test.dart
+│   ├── course_schedule_test.dart
+│   ├── course_table_test.dart
+│   └── time_schedule_test.dart
+├── providers/
+│   ├── settings_provider_test.dart
+│   ├── course_table_provider_test.dart
+│   ├── time_schedule_provider_test.dart
+│   └── weekly_courses_provider_test.dart
+└── repository/
+    ├── course_table_repository_test.dart
+    ├── course_info_repository_test.dart
+    ├── course_schedule_repository_test.dart
+    └── time_schedule_repository_test.dart
 ```
 
 ---
