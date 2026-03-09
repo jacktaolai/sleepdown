@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widget_previews.dart';
 import '../../models/course.dart';
+import '../../models/course_view_model.dart';
 import '../../theme/app_theme.dart';
 
 /// 课程卡片组件
-/// 
+///
 /// Flutter 核心概念：
 /// - Widget: Flutter 中所有 UI 元素都是 Widget，分为 StatelessWidget（无状态）和 StatefulWidget（有状态）
-/// - 这个组件继承自 Card，Card 是一个 Material Design 风格的卡片容器
+/// - 这个组件继承自 StatelessWidget，是一个无状态组件
 /// - build() 方法是核心，每次需要渲染时都会调用，返回一个 Widget 树
-class CourseCard extends Card {
+class CourseCard extends StatelessWidget {
   /// final 关键字表示这个字段只能被赋值一次（Dart 中所有变量默认都是可变的）
-  /// Course 是自定义的数据模型类，存储课程信息
-  final Course course;
-  
+  /// 支持 Course（旧设计）和 CourseViewModel（新三表设计）
+  final dynamic course;
+
   /// bool 是 Dart 的布尔类型，默认值是 null（因为可能是可空类型）
   /// 这里表示是否是当前周的课程
   final bool isCurrentWeek;
-  
+
   /// VoidCallback 是 Flutter 中定义的类型别名：typedef VoidCallback = void Function()
   /// ? 表示可空类型，即 onTap 可以是 null（用户可能不传这个参数）
   /// 用于处理卡片点击事件
@@ -47,16 +48,26 @@ class CourseCard extends Card {
     /// Theme.of(context): 从 Widget 树中向上查找最近的 Theme
     /// 这是 Flutter 的 "InheritedWidget" 机制，用于在树中传递数据
     final theme = Theme.of(context);
-    
+
     /// colorScheme 包含一组协调的颜色，用于应用的主题色
     /// 包括 primary, secondary, surface, onSurface 等颜色
     final colorScheme = theme.colorScheme;
-    
+
     /// brightness 表示当前是亮色模式还是暗色模式
     final brightness = theme.brightness;
-    
+
+    /// 获取课程颜色值（兼容 Course 和 CourseViewModel）
+    final int colorValue;
+    if (course is Course) {
+      colorValue = (course as Course).colorValue;
+    } else if (course is CourseViewModel) {
+      colorValue = (course as CourseViewModel).colorValue;
+    } else {
+      colorValue = 0xFF3B82F6; // 默认蓝色
+    }
+
     /// 根据课程颜色和亮度模式获取卡片颜色方案
-    final cardColors = AppTheme.getCourseCardColorScheme(course.colorValue, brightness);
+    final cardColors = AppTheme.getCourseCardColorScheme(colorValue, brightness);
 
     /// Widget 树从这里开始构建
     /// 

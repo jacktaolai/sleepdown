@@ -5,14 +5,15 @@ import '../../models/course.dart';
 import 'course_card.dart';
 
 /// ScheduleGrid: 课程表网格组件
-/// 
+///
 /// 继承自 ConsumerWidget：就是可滚动的页面
 /// - ConsumerWidget 是 Riverpod 提供的 Widget，可以访问 Provider 的状态
 /// - 当 Provider 的数据变化时，ConsumerWidget 会自动重建（类似 setState）
 /// - 相比 StatefulWidget，不需要手动管理状态，更简洁
 class ScheduleGrid extends ConsumerWidget {
   /// 课程列表 - 显示在课表中的所有课程
-  final List<Course> courses;
+  /// 支持 Course（旧设计）和 CourseViewModel（新三表设计）
+  final List<dynamic> courses;
   
   /// 当前周次 - 用于判断课程是否在当前周显示
   final int currentWeek;
